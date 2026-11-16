@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задача 3.294 — Математика 5 класс</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px;
+        }
+
+        .task-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            max-width: 650px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .task-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 25px 35px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-number {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .task-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .task-body { padding: 35px; }
+
+        .section { margin-bottom: 25px; }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .section-label.condition { background: #fff3e0; color: #e65100; }
+        .section-label.solution { background: #e8f5e9; color: #2e7d32; }
+        .section-label.answer { background: #e3f2fd; color: #1565c0; }
+
+        .condition-text {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #424242;
+            background: #fafafa;
+            border-left: 4px solid #ff9800;
+            padding: 18px 22px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .condition-text strong { color: #d84315; }
+
+        .solution-steps { list-style: none; }
+
+        .solution-step {
+            margin-bottom: 16px;
+            padding: 14px 20px;
+            background: #f9fbe7;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .solution-step:hover { transform: translateX(5px); }
+
+        .step-number {
+            background: linear-gradient(135deg, #43a047, #66bb6a);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            margin-right: 12px;
+        }
+
+        .step-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .step-text strong { color: #1a237e; }
+
+        .final-answer {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 14px;
+            padding: 22px 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .answer-icon { font-size: 36px; }
+
+        .answer-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+
+        .answer-text span { font-size: 24px; color: #1565c0; }
+
+        /* === ОТРЕЗКОВАЯ ДИАГРАММА === */
+        .segment-diagram {
+            background: #f8f9ff;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .diagram-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #5c6bc0;
+            margin-bottom: 20px;
+        }
+
+        .diagram-row {
+            display: flex;
+            align-items: stretch;
+            margin-bottom: 14px;
+        }
+
+        .diagram-label {
+            font-size: 13px;
+            font-weight: 600;
+            width: 110px;
+            text-align: right;
+            padding-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #555;
+        }
+
+        .diagram-bar {
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #333;
+            position: relative;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .diagram-bar .bar-main {
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .diagram-bar .bar-sub {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .bar-ozero {
+            background: linear-gradient(135deg, #42a5f5, #64b5f6);
+            height: 48px;
+            flex: 3;
+            color: white;
+        }
+
+        .bar-reka {
+            background: linear-gradient(135deg, #ffa726, #ffb74d);
+            height: 48px;
+            flex: 2;
+            color: white;
+        }
+
+        .bar-itogo {
+            background: linear-gradient(135deg, #66bb6a, #81c784);
+            height: 44px;
+            flex: 5;
+            color: white;
+        }
+
+        .diagram-bottom {
+            font-size: 15px;
+            color: #777;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .task-body {
+                padding: 20px 16px;
+            }
+
+            .task-header {
+                padding: 18px 20px;
+            }
+
+            .task-number {
+                font-size: 22px;
+                padding: 8px 14px;
+            }
+
+            .task-title {
+                font-size: 16px;
+            }
+
+            .section-label {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+
+            .condition-text {
+                font-size: 15px;
+                padding: 14px 16px;
+            }
+
+            .step-text {
+                font-size: 15px;
+            }
+
+            .step-number {
+                width: 26px;
+                height: 26px;
+                font-size: 13px;
+            }
+
+            .final-answer {
+                padding: 16px 18px;
+            }
+
+            .answer-text {
+                font-size: 17px;
+            }
+
+            .answer-text span {
+                font-size: 20px;
+            }
+
+            /* Диаграмма — вертикально на мобильных */
+            .segment-diagram {
+                padding: 18px 12px;
+            }
+
+            .diagram-title {
+                font-size: 14px;
+            }
+
+            .diagram-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+
+            .diagram-label {
+                width: auto;
+                text-align: left;
+                justify-content: flex-start;
+                padding-right: 0;
+                padding-left: 4px;
+                font-size: 12px;
+            }
+
+            .diagram-bar {
+                min-height: 52px;
+            }
+
+            .diagram-bar .bar-main {
+                font-size: 14px;
+            }
+
+            .diagram-bar .bar-sub {
+                font-size: 11px;
+            }
+
+            .bar-ozero {
+                height: 52px;
+            }
+
+            .bar-reka {
+                height: 52px;
+            }
+
+            .bar-itogo {
+                height: 48px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #f5f5f5;
+            font-size: 13px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="task-card">
+
+        <!-- Шапка -->
+        <div class="task-header">
+            <div class="task-number">№ 3.294</div>
+            <div class="task-title">Моторная лодка на реке и озере</div>
+        </div>
+
+        <div class="task-body">
+
+            <!-- Условие -->
+            <div class="section">
+                <div class="section-label condition">📋 Условие</div>
+                <div class="condition-text">
+                    Моторная лодка плыла <strong>2 ч</strong> по реке и <strong>5 ч</strong> по озеру.
+                    Найдите, сколько всего километров прошла моторная лодка, если по озеру
+                    она двигалась со скоростью <strong>21 км/ч</strong>, а по реке —
+                    <strong>на 4 км/ч быстрее</strong>.
+                </div>
+            </div>
+
+            <!-- Отрезковая диаграмма -->
+            <div class="segment-diagram">
+                <div class="diagram-title">📏 Путь лодки — отрезковая диаграмма</div>
+
+                <div class="diagram-row">
+                    <div class="diagram-label">По озеру, 5 ч:</div>
+                    <div class="diagram-bar bar-ozero">
+                        <div>
+                            <div class="bar-main">5 ч × 21 км/ч</div>
+                            <div class="bar-sub">= 105 км</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram-row">
+                    <div class="diagram-label">По реке, 2 ч:</div>
+                    <div class="diagram-bar bar-reka">
+                        <div>
+                            <div class="bar-main">2 ч × 25 км/ч</div>
+                            <div class="bar-sub">= 50 км</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram-row">
+                    <div class="diagram-label">Всего:</div>
+                    <div class="diagram-bar bar-itogo">
+                        <div>
+                            <div class="bar-main">105 км + 50 км</div>
+                            <div class="bar-sub">= 155 км</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Решение -->
+            <div class="section">
+                <div class="section-label solution">✏️ Решение</div>
+                <ol class="solution-steps">
+                    <li class="solution-step">
+                        <span class="step-number">1</span>
+                        <div class="step-text">
+                            Найдём скорость лодки по реке:
+                            <br><strong>21 + 4 = 25 км/ч</strong>
+                        </div>
+                    </li>
+                    <li class="solution-step">
+                        <span class="step-number">2</span>
+                        <div class="step-text">
+                            Найдём путь, который лодка прошла по озеру:
+                            <br><strong>21 · 5 = 105 км</strong>
+                        </div>
+                    </li>
+                    <li class="solution-step">
+                        <span class="step-number">3</span>
+                        <div class="step-text">
+                            Найдём путь, который лодка прошла по реке:
+                            <br><strong>25 · 2 = 50 км</strong>
+                        </div>
+                    </li>
+                    <li class="solution-step">
+                        <span class="step-number">4</span>
+                        <div class="step-text">
+                            Найдём общий путь:
+                            <br><strong>105 + 50 = 155 км</strong>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Ответ -->
+            <div class="section">
+                <div class="final-answer">
+                    <div class="answer-icon">✅</div>
+                    <div class="answer-text">
+                        Ответ: <span>155 км</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Математика · 5 класс · Для доченьки Кати
+        </div>
+
+    </div>
+</body>
+</html>
