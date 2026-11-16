@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задача 3.294 — Математика 5 класс</title>
+    <title>Задача 3.331 — Математика 5 класс</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -194,24 +194,24 @@
             margin-top: 2px;
         }
 
-        .bar-ozero {
+        .bar-всего {
+            background: linear-gradient(135deg, #78909c, #90a4ae);
+            height: 42px;
+            flex: 5;
+            color: white;
+        }
+
+        .bar-прошли {
             background: linear-gradient(135deg, #42a5f5, #64b5f6);
             height: 48px;
             flex: 3;
             color: white;
         }
 
-        .bar-reka {
-            background: linear-gradient(135deg, #ffa726, #ffb74d);
+        .bar-осталось {
+            background: linear-gradient(135deg, #66bb6a, #81c784);
             height: 48px;
             flex: 2;
-            color: white;
-        }
-
-        .bar-itogo {
-            background: linear-gradient(135deg, #66bb6a, #81c784);
-            height: 44px;
-            flex: 5;
             color: white;
         }
 
@@ -220,6 +220,14 @@
             color: #777;
             font-style: italic;
             margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #f5f5f5;
+            font-size: 13px;
+            color: #999;
         }
 
         /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
@@ -313,25 +321,17 @@
                 font-size: 11px;
             }
 
-            .bar-ozero {
+            .bar-всего {
+                height: 46px;
+            }
+
+            .bar-прошли {
                 height: 52px;
             }
 
-            .bar-reka {
+            .bar-осталось {
                 height: 52px;
             }
-
-            .bar-itogo {
-                height: 48px;
-            }
-        }
-
-        .footer {
-            text-align: center;
-            padding: 15px;
-            background: #f5f5f5;
-            font-size: 13px;
-            color: #999;
         }
     </style>
 </head>
@@ -340,8 +340,8 @@
 
         <!-- Шапка -->
         <div class="task-header">
-            <div class="task-number">№ 3.294</div>
-            <div class="task-title">Моторная лодка на реке и озере</div>
+            <div class="task-number">№ 3.331</div>
+            <div class="task-title">Два друга навстречу друг другу</div>
         </div>
 
         <div class="task-body">
@@ -350,45 +350,51 @@
             <div class="section">
                 <div class="section-label condition">📋 Условие</div>
                 <div class="condition-text">
-                    Моторная лодка плыла <strong>2 ч</strong> по реке и <strong>5 ч</strong> по озеру.
-                    Найдите, сколько всего километров прошла моторная лодка, если по озеру
-                    она двигалась со скоростью <strong>21 км/ч</strong>, а по реке —
-                    <strong>на 4 км/ч быстрее</strong>.
+                    Расстояние между домами двух друзей — <strong>1 км 800 м</strong>.
+                    Они одновременно вышли навстречу друг другу.
+                    Один шёл со скоростью <strong>84 м/мин</strong>, другой —
+                    <strong>на 12 м/мин быстрее</strong>.
+                    Нужно найти, какое расстояние будет между друзьями
+                    через <strong>6 минут</strong> после выхода.
                 </div>
             </div>
 
             <!-- Отрезковая диаграмма -->
             <div class="segment-diagram">
-                <div class="diagram-title">📏 Путь лодки — отрезковая диаграмма</div>
-
-                <div class="diagram-row">
-                    <div class="diagram-label">По озеру, 5 ч:</div>
-                    <div class="diagram-bar bar-ozero">
-                        <div>
-                            <div class="bar-main">5 ч × 21 км/ч</div>
-                            <div class="bar-sub">= 105 км</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="diagram-row">
-                    <div class="diagram-label">По реке, 2 ч:</div>
-                    <div class="diagram-bar bar-reka">
-                        <div>
-                            <div class="bar-main">2 ч × 25 км/ч</div>
-                            <div class="bar-sub">= 50 км</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="diagram-title">📏 Расстояние между домами — отрезковая диаграмма</div>
 
                 <div class="diagram-row">
                     <div class="diagram-label">Всего:</div>
-                    <div class="diagram-bar bar-itogo">
+                    <div class="diagram-bar bar-всего">
                         <div>
-                            <div class="bar-main">105 км + 50 км</div>
-                            <div class="bar-sub">= 155 км</div>
+                            <div class="bar-main">1 км 800 м</div>
+                            <div class="bar-sub">= 1800 м</div>
                         </div>
                     </div>
+                </div>
+
+                <div class="diagram-row">
+                    <div class="diagram-label">Прошли, 6 мин:</div>
+                    <div class="diagram-bar bar-прошли">
+                        <div>
+                            <div class="bar-main">180 м/мин × 6 мин</div>
+                            <div class="bar-sub">= 1080 м</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram-row">
+                    <div class="diagram-label">Осталось:</div>
+                    <div class="diagram-bar bar-осталось">
+                        <div>
+                            <div class="bar-main">1800 м − 1080 м</div>
+                            <div class="bar-sub">= 720 м</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram-bottom">
+                    1800 м − 1080 м = 720 м
                 </div>
             </div>
 
@@ -399,29 +405,36 @@
                     <li class="solution-step">
                         <span class="step-number">1</span>
                         <div class="step-text">
-                            Найдём скорость лодки по реке:
-                            <br><strong>21 + 4 = 25 км/ч</strong>
+                            Переведём расстояние в метры:
+                            <br><strong>1 км 800 м = 1800 м</strong>
                         </div>
                     </li>
                     <li class="solution-step">
                         <span class="step-number">2</span>
                         <div class="step-text">
-                            Найдём путь, который лодка прошла по озеру:
-                            <br><strong>21 · 5 = 105 км</strong>
+                            Найдём скорость второго друга — он идёт на 12 м/мин быстрее:
+                            <br><strong>84 + 12 = 96 м/мин</strong>
                         </div>
                     </li>
                     <li class="solution-step">
                         <span class="step-number">3</span>
                         <div class="step-text">
-                            Найдём путь, который лодка прошла по реке:
-                            <br><strong>25 · 2 = 50 км</strong>
+                            Найдём скорость сближения — они идут навстречу, скорости складываются:
+                            <br><strong>84 + 96 = 180 м/мин</strong>
                         </div>
                     </li>
                     <li class="solution-step">
                         <span class="step-number">4</span>
                         <div class="step-text">
-                            Найдём общий путь:
-                            <br><strong>105 + 50 = 155 км</strong>
+                            Найдём, сколько метров они прошли вместе за 6 минут:
+                            <br><strong>180 × 6 = 1080 м</strong>
+                        </div>
+                    </li>
+                    <li class="solution-step">
+                        <span class="step-number">5</span>
+                        <div class="step-text">
+                            Найдём, какое расстояние осталось между ними:
+                            <br><strong>1800 − 1080 = 720 м</strong>
                         </div>
                     </li>
                 </ol>
@@ -432,7 +445,7 @@
                 <div class="final-answer">
                     <div class="answer-icon">✅</div>
                     <div class="answer-text">
-                        Ответ: <span>155 км</span>
+                        Ответ: <span>720 м</span>
                     </div>
                 </div>
             </div>
