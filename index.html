@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задача 3.331 — Математика 5 класс</title>
+    <title>Задача 416 — Касание окружностей</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -21,7 +21,7 @@
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-            max-width: 650px;
+            max-width: 750px;
             width: 100%;
             overflow: hidden;
         }
@@ -83,6 +83,135 @@
 
         .condition-text strong { color: #d84315; }
 
+        /* === Переключатель вариантов === */
+        .variant-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+        }
+
+        .variant-tab {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f5f5f5;
+            color: #888;
+            border: none;
+            outline: none;
+        }
+
+        .variant-tab.active {
+            background: linear-gradient(135deg, #5c6bc0, #7986cb);
+            color: white;
+        }
+
+        .variant-tab:first-child { border-right: 2px solid #e0e0e0; }
+        .variant-tab.active:first-child { border-right-color: #7986cb; }
+
+        .variant-content { display: none; }
+        .variant-content.active { display: block; }
+
+        /* === SVG Canvas === */
+        .svg-container {
+            background: #f8f9ff;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .svg-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* === Анимации === */
+        .draw-line {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawLine 1.5s ease forwards;
+        }
+
+        .draw-circle {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawCircle 1.5s ease forwards;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .point-marker {
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes drawCircle {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .pulse { animation: pulse 0.5s ease 1; }
+
+        /* === Кнопки === */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-replay {
+            background: linear-gradient(135deg, #ffa726, #ffb74d);
+            color: white;
+        }
+
+        .btn-replay:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4); }
+
+        .btn-next {
+            background: linear-gradient(135deg, #42a5f5, #64b5f6);
+            color: white;
+        }
+
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(66, 165, 245, 0.4); }
+
+        /* === Решение === */
         .solution-steps { list-style: none; }
 
         .solution-step {
@@ -90,7 +219,14 @@
             padding: 14px 20px;
             background: #f9fbe7;
             border-radius: 12px;
-            transition: transform 0.2s;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .solution-step.visible {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .solution-step:hover { transform: translateX(5px); }
@@ -136,91 +272,18 @@
 
         .answer-text span { font-size: 24px; color: #1565c0; }
 
-        /* === ОТРЕЗКОВАЯ ДИАГРАММА === */
-        .segment-diagram {
-            background: #f8f9ff;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 25px 20px;
-            text-align: center;
+        .explain-box {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border: 2px solid #ffc107;
+            border-radius: 14px;
+            padding: 20px 25px;
             margin-bottom: 25px;
-        }
-
-        .diagram-title {
             font-size: 16px;
-            font-weight: 700;
-            color: #5c6bc0;
-            margin-bottom: 20px;
-        }
-
-        .diagram-row {
-            display: flex;
-            align-items: stretch;
-            margin-bottom: 14px;
-        }
-
-        .diagram-label {
-            font-size: 13px;
-            font-weight: 600;
-            width: 110px;
-            text-align: right;
-            padding-right: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            line-height: 1.7;
             color: #555;
         }
 
-        .diagram-bar {
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #333;
-            position: relative;
-            padding: 0 10px;
-            text-align: center;
-        }
-
-        .diagram-bar .bar-main {
-            font-size: 16px;
-            line-height: 1.3;
-        }
-
-        .diagram-bar .bar-sub {
-            font-size: 12px;
-            opacity: 0.7;
-            margin-top: 2px;
-        }
-
-        .bar-всего {
-            background: linear-gradient(135deg, #78909c, #90a4ae);
-            height: 42px;
-            flex: 5;
-            color: white;
-        }
-
-        .bar-прошли {
-            background: linear-gradient(135deg, #42a5f5, #64b5f6);
-            height: 48px;
-            flex: 3;
-            color: white;
-        }
-
-        .bar-осталось {
-            background: linear-gradient(135deg, #66bb6a, #81c784);
-            height: 48px;
-            flex: 2;
-            color: white;
-        }
-
-        .diagram-bottom {
-            font-size: 15px;
-            color: #777;
-            font-style: italic;
-            margin-top: 5px;
-        }
+        .explain-box strong { color: #e65100; }
 
         .footer {
             text-align: center;
@@ -232,221 +295,230 @@
 
         /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
         @media (max-width: 600px) {
-            body {
-                padding: 15px;
-            }
-
-            .task-body {
-                padding: 20px 16px;
-            }
-
-            .task-header {
-                padding: 18px 20px;
-            }
-
-            .task-number {
-                font-size: 22px;
-                padding: 8px 14px;
-            }
-
-            .task-title {
-                font-size: 16px;
-            }
-
-            .section-label {
-                font-size: 13px;
-                padding: 6px 12px;
-            }
-
-            .condition-text {
-                font-size: 15px;
-                padding: 14px 16px;
-            }
-
-            .step-text {
-                font-size: 15px;
-            }
-
-            .step-number {
-                width: 26px;
-                height: 26px;
-                font-size: 13px;
-            }
-
-            .final-answer {
-                padding: 16px 18px;
-            }
-
-            .answer-text {
-                font-size: 17px;
-            }
-
-            .answer-text span {
-                font-size: 20px;
-            }
-
-            /* Диаграмма — вертикально на мобильных */
-            .segment-diagram {
-                padding: 18px 12px;
-            }
-
-            .diagram-title {
-                font-size: 14px;
-            }
-
-            .diagram-row {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 4px;
-            }
-
-            .diagram-label {
-                width: auto;
-                text-align: left;
-                justify-content: flex-start;
-                padding-right: 0;
-                padding-left: 4px;
-                font-size: 12px;
-            }
-
-            .diagram-bar {
-                min-height: 52px;
-            }
-
-            .diagram-bar .bar-main {
-                font-size: 14px;
-            }
-
-            .diagram-bar .bar-sub {
-                font-size: 11px;
-            }
-
-            .bar-всего {
-                height: 46px;
-            }
-
-            .bar-прошли {
-                height: 52px;
-            }
-
-            .bar-осталось {
-                height: 52px;
-            }
+            body { padding: 15px; }
+            .task-body { padding: 20px 16px; }
+            .task-header { padding: 18px 20px; }
+            .task-number { font-size: 22px; padding: 8px 14px; }
+            .task-title { font-size: 16px; }
+            .section-label { font-size: 13px; padding: 6px 12px; }
+            .condition-text { font-size: 15px; padding: 14px 16px; }
+            .step-text { font-size: 15px; }
+            .step-number { width: 26px; height: 26px; font-size: 13px; }
+            .final-answer { padding: 16px 18px; }
+            .answer-text { font-size: 17px; }
+            .answer-text span { font-size: 20px; }
+            .btn { padding: 10px 20px; font-size: 14px; }
+            .variant-tab { padding: 12px 14px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
     <div class="task-card">
 
-        <!-- Шапка -->
         <div class="task-header">
-            <div class="task-number">№ 3.331</div>
-            <div class="task-title">Два друга навстречу друг другу</div>
+            <div class="task-number">№ 416</div>
+            <div class="task-title">Касание окружностей</div>
         </div>
 
         <div class="task-body">
 
-            <!-- Условие -->
             <div class="section">
                 <div class="section-label condition">📋 Условие</div>
                 <div class="condition-text">
-                    Расстояние между домами двух друзей — <strong>1 км 800 м</strong>.
-                    Они одновременно вышли навстречу друг другу.
-                    Один шёл со скоростью <strong>84 м/мин</strong>, другой —
-                    <strong>на 12 м/мин быстрее</strong>.
-                    Нужно найти, какое расстояние будет между друзьями
-                    через <strong>6 минут</strong> после выхода.
+                    На отрезке AB отметьте точку C.<br>
+                    <strong>а)</strong> Постройте две окружности: с центром A и радиусом AC, 
+                    и с центром B и радиусом CB. Построенные окружности имеют только одну 
+                    общую точку C. Говорят, что они <strong>касаются внешним образом</strong>.<br><br>
+                    <strong>б)</strong> Постройте две окружности: с центром A и радиусом AB, 
+                    и с центром C и радиусом CB. Построенные окружности имеют только одну 
+                    общую точку B. Говорят, что они <strong>касаются внутренним образом</strong>.
                 </div>
             </div>
 
-            <!-- Отрезковая диаграмма -->
-            <div class="segment-diagram">
-                <div class="diagram-title">📏 Расстояние между домами — отрезковая диаграмма</div>
+            <div class="explain-box">
+                💡 <strong>Подумай:</strong> Окружности могут касаться двумя способами — 
+                <strong>внешним</strong> (одна снаружи другой) и 
+                <strong>внутренним</strong> (одна внутри другой).
+                В каждом случае у них только одна общая точка!
+            </div>
 
-                <div class="diagram-row">
-                    <div class="diagram-label">Всего:</div>
-                    <div class="diagram-bar bar-всего">
-                        <div>
-                            <div class="bar-main">1 км 800 м</div>
-                            <div class="bar-sub">= 1800 м</div>
-                        </div>
-                    </div>
+            <!-- Переключатель вариантов -->
+            <div class="variant-tabs">
+                <button class="variant-tab active" onclick="switchVariant(0)">а) Внешнее касание</button>
+                <button class="variant-tab" onclick="switchVariant(1)">б) Внутреннее касание</button>
+            </div>
+
+            <!-- Вариант А: Внешнее касание -->
+            <div class="variant-content active" id="variant-0">
+                <div class="svg-container">
+                    <svg id="svg-a" width="650" height="250" viewBox="0 0 650 250">
+                        <!-- Подписи точек -->
+                        <text x="80" y="240" font-size="18" font-weight="bold" fill="#333">A</text>
+                        <text x="350" y="240" font-size="18" font-weight="bold" fill="#333">C</text>
+                        <text x="560" y="240" font-size="18" font-weight="bold" fill="#333">B</text>
+
+                        <!-- Отрезок AB -->
+                        <line id="line-ab-a" x1="80" y1="100" x2="560" y2="100" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay: 0s;"/>
+
+                        <!-- Точка C -->
+                        <circle id="point-c-a" cx="350" cy="100" r="6" fill="#ff6f00" class="point-marker" style="animation-delay: 1.2s;"/>
+
+                        <!-- Точка A -->
+                        <circle cx="80" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.3s;"/>
+
+                        <!-- Точка B -->
+                        <circle cx="560" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.6s;"/>
+
+                        <!-- Радиус AC (пунктир) -->
+                        <line id="line-ac-a" x1="80" y1="100" x2="350" y2="100" stroke="#42a5f5" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.5s;"/>
+                        <text x="215" y="85" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay: 1.5s;">радиус AC</text>
+
+                        <!-- Радиус CB (пунктир) -->
+                        <line id="line-cb-a" x1="350" y1="100" x2="560" y2="100" stroke="#ffa726" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.8s;"/>
+                        <text x="455" y="85" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay: 1.8s;">радиус CB</text>
+
+                        <!-- Окружность с центром A, радиус AC -->
+                        <circle id="circle-a-a" cx="80" cy="100" r="270" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle" style="animation-delay: 2s;"/>
+
+                        <!-- Окружность с центром B, радиус CB -->
+                        <circle id="circle-b-a" cx="560" cy="100" r="210" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle" style="animation-delay: 2.5s;"/>
+
+                        <!-- Точка касания C (подсветка) -->
+                        <circle cx="350" cy="100" r="10" fill="#4caf50" class="point-marker" style="animation-delay: 3.2s;"/>
+                        <text x="350" y="60" font-size="16" fill="#4caf50" font-weight="bold" class="fade-in" style="animation-delay: 3.2s;">точка касания</text>
+
+                        <!-- Подпись результата -->
+                        <text x="325" y="190" font-size="16" fill="#1a237e" font-weight="bold" class="fade-in" style="animation-delay: 3.5s;">Окружности касаются внешним образом!</text>
+                        <text x="325" y="210" font-size="14" fill="#555" class="fade-in" style="animation-delay: 3.8s;">Общая точка — только C</text>
+                    </svg>
                 </div>
 
-                <div class="diagram-row">
-                    <div class="diagram-label">Прошли, 6 мин:</div>
-                    <div class="diagram-bar bar-прошли">
-                        <div>
-                            <div class="bar-main">180 м/мин × 6 мин</div>
-                            <div class="bar-sub">= 1080 м</div>
-                        </div>
-                    </div>
+                <div class="btn-container">
+                    <button class="btn btn-replay" onclick="replay('a')">🔁 Повторить</button>
                 </div>
 
-                <div class="diagram-row">
-                    <div class="diagram-label">Осталось:</div>
-                    <div class="diagram-bar bar-осталось">
-                        <div>
-                            <div class="bar-main">1800 м − 1080 м</div>
-                            <div class="bar-sub">= 720 м</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="diagram-bottom">
-                    1800 м − 1080 м = 720 м
+                <div class="section">
+                    <div class="section-label solution">✏️ Решение — внешний образ</div>
+                    <ol class="solution-steps" id="steps-a">
+                        <li class="solution-step">
+                            <span class="step-number">1</span>
+                            <div class="step-text">
+                                Берём отрезок AB и отмечаем на нём точку C
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">2</span>
+                            <div class="step-text">
+                                Строим окружность с центром в точке A и радиусом AC — это расстояние от A до C
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">3</span>
+                            <div class="step-text">
+                                Строим окружность с центром в точке B и радиусом CB — расстояние от C до B
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">4</span>
+                            <div class="step-text">
+                                Обе окружности проходят через точку C — это их <strong>общая точка</strong>!
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">5</span>
+                            <div class="step-text">
+                                Так как каждая окружность снаружи другой и они касаются в точке C — 
+                                это <strong>внешнее касание</strong>
+                            </div>
+                        </li>
+                    </ol>
                 </div>
             </div>
 
-            <!-- Решение -->
-            <div class="section">
-                <div class="section-label solution">✏️ Решение</div>
-                <ol class="solution-steps">
-                    <li class="solution-step">
-                        <span class="step-number">1</span>
-                        <div class="step-text">
-                            Переведём расстояние в метры:
-                            <br><strong>1 км 800 м = 1800 м</strong>
-                        </div>
-                    </li>
-                    <li class="solution-step">
-                        <span class="step-number">2</span>
-                        <div class="step-text">
-                            Найдём скорость второго друга — он идёт на 12 м/мин быстрее:
-                            <br><strong>84 + 12 = 96 м/мин</strong>
-                        </div>
-                    </li>
-                    <li class="solution-step">
-                        <span class="step-number">3</span>
-                        <div class="step-text">
-                            Найдём скорость сближения — они идут навстречу, скорости складываются:
-                            <br><strong>84 + 96 = 180 м/мин</strong>
-                        </div>
-                    </li>
-                    <li class="solution-step">
-                        <span class="step-number">4</span>
-                        <div class="step-text">
-                            Найдём, сколько метров они прошли вместе за 6 минут:
-                            <br><strong>180 × 6 = 1080 м</strong>
-                        </div>
-                    </li>
-                    <li class="solution-step">
-                        <span class="step-number">5</span>
-                        <div class="step-text">
-                            Найдём, какое расстояние осталось между ними:
-                            <br><strong>1800 − 1080 = 720 м</strong>
-                        </div>
-                    </li>
-                </ol>
-            </div>
+            <!-- Вариант Б: Внутреннее касание -->
+            <div class="variant-content" id="variant-1">
+                <div class="svg-container">
+                    <svg id="svg-b" width="650" height="250" viewBox="0 0 650 250">
+                        <!-- Подписи точек -->
+                        <text x="80" y="240" font-size="18" font-weight="bold" fill="#333">A</text>
+                        <text x="350" y="240" font-size="18" font-weight="bold" fill="#333">C</text>
+                        <text x="560" y="240" font-size="18" font-weight="bold" fill="#333">B</text>
 
-            <!-- Ответ -->
-            <div class="section">
-                <div class="final-answer">
-                    <div class="answer-icon">✅</div>
-                    <div class="answer-text">
-                        Ответ: <span>720 м</span>
-                    </div>
+                        <!-- Отрезок AB -->
+                        <line id="line-ab-b" x1="80" y1="100" x2="560" y2="100" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay: 0s;"/>
+
+                        <!-- Точка C -->
+                        <circle id="point-c-b" cx="350" cy="100" r="6" fill="#ff6f00" class="point-marker" style="animation-delay: 1.2s;"/>
+
+                        <!-- Точка A -->
+                        <circle cx="80" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.3s;"/>
+
+                        <!-- Точка B -->
+                        <circle cx="560" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.6s;"/>
+
+                        <!-- Радиус AB (пунктир) -->
+                        <line id="line-ab-rad-b" x1="80" y1="100" x2="560" y2="100" stroke="#42a5f5" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.5s;"/>
+                        <text x="320" y="85" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay: 1.5s;">радиус AB</text>
+
+                        <!-- Радиус CB (пунктир) -->
+                        <line id="line-cb-rad-b" x1="350" y1="100" x2="560" y2="100" stroke="#ffa726" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.8s;"/>
+                        <text x="455" y="85" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay: 1.8s;">радиус CB</text>
+
+                        <!-- Большая окружность — центр A, радиус AB -->
+                        <circle id="circle-ab-b" cx="80" cy="100" r="480" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle" style="animation-delay: 2s;"/>
+
+                        <!-- Малая окружность — центр C, радиус CB -->
+                        <circle id="circle-cb-b" cx="350" cy="100" r="210" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle" style="animation-delay: 2.5s;"/>
+
+                        <!-- Точка касания B (подсветка) -->
+                        <circle cx="560" cy="100" r="10" fill="#4caf50" class="point-marker" style="animation-delay: 3.2s;"/>
+                        <text x="560" y="60" font-size="16" fill="#4caf50" font-weight="bold" class="fade-in" style="animation-delay: 3.2s;">точка касания</text>
+
+                        <!-- Подпись результата -->
+                        <text x="325" y="190" font-size="16" fill="#1a237e" font-weight="bold" class="fade-in" style="animation-delay: 3.5s;">Окружности касаются внутренним образом!</text>
+                        <text x="325" y="210" font-size="14" fill="#555" class="fade-in" style="animation-delay: 3.8s;">Общая точка — только B. Малая окружность внутри большой!</text>
+                    </svg>
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn btn-replay" onclick="replay('b')">🔁 Повторить</button>
+                </div>
+
+                <div class="section">
+                    <div class="section-label solution">✏️ Решение — внутренний образ</div>
+                    <ol class="solution-steps" id="steps-b">
+                        <li class="solution-step">
+                            <span class="step-number">1</span>
+                            <div class="step-text">
+                                Берём отрезок AB и отмечаем на нём точку C
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">2</span>
+                            <div class="step-text">
+                                Строим окружность с центром в точке A и радиусом AB — от A до самого конца отрезка
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">3</span>
+                            <div class="step-text">
+                                Строим окружность с центром в точке C и радиусом CB — от C до B
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">4</span>
+                            <div class="step-text">
+                                Обе окружности проходят через точку B — это их <strong>общая точка</strong>!
+                            </div>
+                        </li>
+                        <li class="solution-step">
+                            <span class="step-number">5</span>
+                            <div class="step-text">
+                                Малая окружность (центр C) лежит внутри большой (центр A), 
+                                и они касаются в точке B — это <strong>внутреннее касание</strong>
+                            </div>
+                        </li>
+                    </ol>
                 </div>
             </div>
 
@@ -457,5 +529,105 @@
         </div>
 
     </div>
+
+    <script>
+        // Переключение вариантов
+        function switchVariant(index) {
+            // Обновляем кнопки
+            const tabs = document.querySelectorAll('.variant-tab');
+            tabs.forEach((t, i) => {
+                t.classList.toggle('active', i === index);
+            });
+            // Обновляем контент
+            const contents = document.querySelectorAll('.variant-content');
+            contents.forEach((c, i) => {
+                c.classList.toggle('active', i === index);
+                // Если включаем вариант — перезапускаем анимацию
+                if (i === index) {
+                    setTimeout(() => replay(i === 0 ? 'a' : 'b'), 100);
+                    // Показываем шаги
+                    const steps = document.querySelectorAll(`#variant-${index} .solution-step`);
+                    steps.forEach((step, si) => {
+                        step.classList.remove('visible');
+                        setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
+                    });
+                }
+            });
+        }
+
+        // Перезапуск анимации
+        function replay(variant) {
+            // Сбрасываем все анимации
+            const svg = document.getElementById(`svg-${variant}`);
+            const elements = svg.querySelectorAll('.draw-line, .draw-circle, .fade-in, .point-marker');
+            
+            elements.forEach(el => {
+                // Удаляем и добавляем класс обратно
+                const classes = el.className.baseVal || el.getAttribute('class') || '';
+                const style = el.getAttribute('style') || '';
+                
+                // Создаём копию без анимации
+                const clone = el.cloneNode(true);
+                clone.removeAttribute('class');
+                clone.removeAttribute('style');
+                el.parentNode.replaceChild(clone, el);
+            });
+
+            // Возвращаем анимацию через setTimeout
+            setTimeout(() => {
+                // Перезапускаем линии
+                const drawLines = svg.querySelectorAll('.draw-line');
+                drawLines.forEach(el => {
+                    const style = el.style;
+                    style.animation = 'none';
+                    el.offsetHeight; // reflow
+                    style.animation = '';
+                });
+
+                const drawCircles = svg.querySelectorAll('.draw-circle');
+                drawCircles.forEach(el => {
+                    const style = el.style;
+                    style.animation = 'none';
+                    el.offsetHeight;
+                    style.animation = '';
+                });
+
+                const fadeInElements = svg.querySelectorAll('.fade-in');
+                fadeInElements.forEach(el => {
+                    const style = el.style;
+                    style.animation = 'none';
+                    el.offsetHeight;
+                    style.animation = '';
+                });
+
+                const pointMarkers = svg.querySelectorAll('.point-marker');
+                pointMarkers.forEach(el => {
+                    const style = el.style;
+                    style.animation = 'none';
+                    el.offsetHeight;
+                    style.animation = '';
+                });
+
+                // Показываем шаги решения
+                const variantIndex = variant === 'a' ? 0 : 1;
+                const steps = document.querySelectorAll(`#variant-${variantIndex} .solution-step`);
+                steps.forEach((step, si) => {
+                    step.classList.remove('visible');
+                    setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
+                });
+            }, 50);
+        }
+
+        // Авто-анимация при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                replay('a');
+                const steps = document.querySelectorAll('#variant-0 .solution-step');
+                steps.forEach((step, si) => {
+                    setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
+                });
+            }, 300);
+        });
+    </script>
 </body>
 </html>
