@@ -256,9 +256,22 @@
                         <!-- Точка касания C -->
                         <circle cx="350" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
                         <circle cx="350" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
+                        <!-- Стрелка радиуса AC -->
+                        <line x1="230" y1="195" x2="350" y2="195" stroke="#42a5f5" stroke-width="2" marker-end="url(#arrow-blue)" class="fade-in" style="animation-delay:1.5s"/>
+                        <!-- Стрелка радиуса CB -->
+                        <line x1="350" y1="225" x2="470" y2="225" stroke="#ffa726" stroke-width="2" marker-end="url(#arrow-orange)" class="fade-in" style="animation-delay:2.2s"/>
+                        <!-- Маркеры-стрелки для SVG -->
+                        <defs>
+                            <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#42a5f5"/>
+                            </marker>
+                            <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#ffa726"/>
+                            </marker>
+                        </defs>
                         <!-- Подписи радиусов -->
-                        <text x="280" y="80" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">AC</text>
-                        <text x="410" y="80" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">CB</text>
+                        <text x="290" y="185" font-size="13" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">радиус AC</text>
+                        <text x="410" y="245" font-size="13" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">радиус CB</text>
                         <!-- Результат -->
                         <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внешним образом</text>
                         <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только C</text>
@@ -290,9 +303,22 @@
                         <!-- Точка касания B -->
                         <circle cx="430" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
                         <circle cx="430" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
+                        <!-- Стрелка радиуса AB -->
+                        <line x1="230" y1="195" x2="430" y2="195" stroke="#42a5f5" stroke-width="2" marker-end="url(#arrow-blue-b)" class="fade-in" style="animation-delay:1.5s"/>
+                        <!-- Стрелка радиуса CB -->
+                        <line x1="310" y1="225" x2="430" y2="225" stroke="#ffa726" stroke-width="2" marker-end="url(#arrow-orange-b)" class="fade-in" style="animation-delay:2.2s"/>
+                        <!-- Маркеры-стрелки для SVG -->
+                        <defs>
+                            <marker id="arrow-blue-b" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#42a5f5"/>
+                            </marker>
+                            <marker id="arrow-orange-b" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#ffa726"/>
+                            </marker>
+                        </defs>
                         <!-- Подписи радиусов -->
-                        <text x="330" y="75" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">AB</text>
-                        <text x="380" y="260" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">CB</text>
+                        <text x="310" y="185" font-size="13" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">радиус AB</text>
+                        <text x="380" y="245" font-size="13" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">радиус CB</text>
                         <!-- Результат -->
                         <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внутренним образом</text>
                         <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только B. Малая окружность внутри большой.</text>
@@ -303,14 +329,27 @@
                 </div>
             </div>
 
-            <div class="section">
-                <div class="section-label solution">Решение — шаг за шагом</div>
-                <ol class="solution-steps" id="steps">
+            <!-- Решение для варианта А -->
+            <div id="solution-a" class="section">
+                <div class="section-label solution">Решение — вариант а)</div>
+                <ol class="solution-steps">
                     <li class="solution-step"><span class="step-number">1</span><div class="step-text">Берём отрезок AB и отмечаем на нём точку C</div></li>
-                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим первую окружность с центром в одной из точек</div></li>
-                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим вторую окружность с центром в другой точке</div></li>
-                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через одну точку — это их <strong>общая точка</strong></div></li>
-                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Так как у них только одна общая точка — это <strong>касание</strong>!</div></li>
+                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим окружность с центром в точке A и <strong>радиусом AC</strong> — расстояние от A до C</div></li>
+                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим окружность с центром в точке B и <strong>радиусом CB</strong> — расстояние от C до B</div></li>
+                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через точку C — это их <strong>общая точка</strong></div></li>
+                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Так как каждая окружность снаружи другой и они касаются в точке C — это <strong>внешнее касание</strong></div></li>
+                </ol>
+            </div>
+
+            <!-- Решение для варианта Б -->
+            <div id="solution-b" class="section" style="display:none">
+                <div class="section-label solution">Решение — вариант б)</div>
+                <ol class="solution-steps">
+                    <li class="solution-step"><span class="step-number">1</span><div class="step-text">Берём отрезок AB и отмечаем на нём точку C</div></li>
+                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим окружность с центром в точке A и <strong>радиусом AB</strong> — расстояние от A до самого конца отрезка</div></li>
+                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим окружность с центром в точке C и <strong>радиусом CB</strong> — расстояние от C до B</div></li>
+                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через точку B — это их <strong>общая точка</strong></div></li>
+                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Малая окружность (центр C) лежит внутри большой (центр A), и они касаются в точке B — это <strong>внутреннее касание</strong></div></li>
                 </ol>
             </div>
         </div>
@@ -324,11 +363,16 @@
             });
             document.querySelectorAll('.variant-content').forEach((c, i) => {
                 c.classList.toggle('active', i === index);
-                if (i === index) {
-                    setTimeout(() => replay(i === 0 ? 'a' : 'b'), 100);
-                    animateSteps();
-                }
             });
+            // Показываем нужное решение
+            document.getElementById('solution-a').style.display = index === 0 ? '' : 'none';
+            document.getElementById('solution-b').style.display = index === 1 ? '' : 'none';
+            if (index === 0) {
+                setTimeout(() => replay('a'), 100);
+            } else {
+                setTimeout(() => replay('b'), 100);
+            }
+            animateSteps();
         }
 
         function replay(variant) {
