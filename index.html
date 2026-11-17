@@ -6,7 +6,6 @@
     <title>Задача 416 — Касание окружностей</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -16,7 +15,6 @@
             align-items: flex-start;
             padding: 30px;
         }
-
         .task-card {
             background: #ffffff;
             border-radius: 20px;
@@ -25,7 +23,6 @@
             width: 100%;
             overflow: hidden;
         }
-
         .task-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             padding: 25px 35px;
@@ -33,7 +30,6 @@
             align-items: center;
             gap: 15px;
         }
-
         .task-number {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 12px;
@@ -43,17 +39,9 @@
             color: #ffffff;
             letter-spacing: 1px;
         }
-
-        .task-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
+        .task-title { font-size: 20px; font-weight: 600; color: #ffffff; }
         .task-body { padding: 35px; }
-
         .section { margin-bottom: 25px; }
-
         .section-label {
             display: inline-flex;
             align-items: center;
@@ -66,11 +54,8 @@
             padding: 8px 16px;
             border-radius: 8px;
         }
-
         .section-label.condition { background: #fff3e0; color: #e65100; }
         .section-label.solution { background: #e8f5e9; color: #2e7d32; }
-        .section-label.answer { background: #e3f2fd; color: #1565c0; }
-
         .condition-text {
             font-size: 17px;
             line-height: 1.8;
@@ -80,10 +65,7 @@
             padding: 18px 22px;
             border-radius: 0 12px 12px 0;
         }
-
         .condition-text strong { color: #d84315; }
-
-        /* === Переключатель вариантов === */
         .variant-tabs {
             display: flex;
             gap: 0;
@@ -92,7 +74,6 @@
             overflow: hidden;
             border: 2px solid #e0e0e0;
         }
-
         .variant-tab {
             flex: 1;
             padding: 14px 20px;
@@ -106,19 +87,14 @@
             border: none;
             outline: none;
         }
-
         .variant-tab.active {
             background: linear-gradient(135deg, #5c6bc0, #7986cb);
             color: white;
         }
-
         .variant-tab:first-child { border-right: 2px solid #e0e0e0; }
         .variant-tab.active:first-child { border-right-color: #7986cb; }
-
         .variant-content { display: none; }
         .variant-content.active { display: block; }
-
-        /* === SVG Canvas === */
         .svg-container {
             background: #f8f9ff;
             border: 2px solid #e0e0e0;
@@ -126,64 +102,33 @@
             padding: 20px;
             text-align: center;
             margin-bottom: 25px;
-            position: relative;
         }
+        .svg-container svg { max-width: 100%; height: auto; }
 
-        .svg-container svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* === Анимации === */
+        /* Анимации построения */
         .draw-line {
-            stroke-dasharray: 400;
-            stroke-dashoffset: 400;
-            animation: drawLine 1.5s ease forwards;
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            animation: drawLine 1s ease forwards;
         }
-
-        .draw-circle {
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: drawCircle 1.5s ease forwards;
+        .draw-circle-lg {
+            stroke-dasharray: 1300;
+            stroke-dashoffset: 1300;
+            animation: drawCircle 2.5s ease forwards;
         }
-
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
+        .draw-circle-sm {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawCircle 2s ease forwards;
         }
+        .fade-in { opacity: 0; animation: fadeIn 0.5s ease forwards; }
+        .point-marker { opacity: 0; animation: fadeIn 0.3s ease forwards; }
 
-        .point-marker {
-            opacity: 0;
-            animation: fadeIn 0.3s ease forwards;
-        }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+        @keyframes fadeIn { to { opacity: 1; } }
 
-        @keyframes drawLine {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes drawCircle {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
-
-        .pulse { animation: pulse 0.5s ease 1; }
-
-        /* === Кнопки === */
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
+        .btn-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
         .btn {
             padding: 12px 28px;
             font-size: 16px;
@@ -196,24 +141,12 @@
             align-items: center;
             gap: 8px;
         }
-
         .btn-replay {
             background: linear-gradient(135deg, #ffa726, #ffb74d);
             color: white;
         }
-
         .btn-replay:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4); }
-
-        .btn-next {
-            background: linear-gradient(135deg, #42a5f5, #64b5f6);
-            color: white;
-        }
-
-        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(66, 165, 245, 0.4); }
-
-        /* === Решение === */
         .solution-steps { list-style: none; }
-
         .solution-step {
             margin-bottom: 16px;
             padding: 14px 20px;
@@ -223,14 +156,7 @@
             transform: translateX(-20px);
             transition: all 0.5s ease;
         }
-
-        .solution-step.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .solution-step:hover { transform: translateX(5px); }
-
+        .solution-step.visible { opacity: 1; transform: translateX(0); }
         .step-number {
             background: linear-gradient(135deg, #43a047, #66bb6a);
             color: white;
@@ -244,34 +170,8 @@
             font-size: 15px;
             margin-right: 12px;
         }
-
-        .step-text {
-            font-size: 17px;
-            line-height: 1.7;
-            color: #333;
-        }
-
+        .step-text { font-size: 17px; line-height: 1.7; color: #333; }
         .step-text strong { color: #1a237e; }
-
-        .final-answer {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border-radius: 14px;
-            padding: 22px 28px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .answer-icon { font-size: 36px; }
-
-        .answer-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0d47a1;
-        }
-
-        .answer-text span { font-size: 24px; color: #1565c0; }
-
         .explain-box {
             background: linear-gradient(135deg, #fff8e1, #ffecb3);
             border: 2px solid #ffc107;
@@ -282,9 +182,7 @@
             line-height: 1.7;
             color: #555;
         }
-
         .explain-box strong { color: #e65100; }
-
         .footer {
             text-align: center;
             padding: 15px;
@@ -292,8 +190,6 @@
             font-size: 13px;
             color: #999;
         }
-
-        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
         @media (max-width: 600px) {
             body { padding: 15px; }
             .task-body { padding: 20px 16px; }
@@ -304,9 +200,6 @@
             .condition-text { font-size: 15px; padding: 14px 16px; }
             .step-text { font-size: 15px; }
             .step-number { width: 26px; height: 26px; font-size: 13px; }
-            .final-answer { padding: 16px 18px; }
-            .answer-text { font-size: 17px; }
-            .answer-text span { font-size: 20px; }
             .btn { padding: 10px 20px; font-size: 14px; }
             .variant-tab { padding: 12px 14px; font-size: 14px; }
         }
@@ -314,318 +207,150 @@
 </head>
 <body>
     <div class="task-card">
-
         <div class="task-header">
             <div class="task-number">№ 416</div>
             <div class="task-title">Касание окружностей</div>
         </div>
-
         <div class="task-body">
-
             <div class="section">
-                <div class="section-label condition">📋 Условие</div>
+                <div class="section-label condition">Условие</div>
                 <div class="condition-text">
-                    На отрезке AB отметьте точку C.<br>
-                    <strong>а)</strong> Постройте две окружности: с центром A и радиусом AC, 
-                    и с центром B и радиусом CB. Построенные окружности имеют только одну 
+                    На отрезке AB отметьте точку C.<br><br>
+                    <strong>а)</strong> Постройте две окружности: с центром A и радиусом AC,
+                    и с центром B и радиусом CB. Построенные окружности имеют только одну
                     общую точку C. Говорят, что они <strong>касаются внешним образом</strong>.<br><br>
-                    <strong>б)</strong> Постройте две окружности: с центром A и радиусом AB, 
-                    и с центром C и радиусом CB. Построенные окружности имеют только одну 
+                    <strong>б)</strong> Постройте две окружности: с центром A и радиусом AB,
+                    и с центром C и радиусом CB. Построенные окружности имеют только одну
                     общую точку B. Говорят, что они <strong>касаются внутренним образом</strong>.
                 </div>
             </div>
 
             <div class="explain-box">
-                💡 <strong>Подумай:</strong> Окружности могут касаться двумя способами — 
-                <strong>внешним</strong> (одна снаружи другой) и 
-                <strong>внутренним</strong> (одна внутри другой).
-                В каждом случае у них только одна общая точка!
+                Окружности могут касаться двумя способами — <strong>внешним</strong>
+                (одна снаружи другой) и <strong>внутренним</strong> (одна внутри другой).
             </div>
 
-            <!-- Переключатель вариантов -->
             <div class="variant-tabs">
                 <button class="variant-tab active" onclick="switchVariant(0)">а) Внешнее касание</button>
                 <button class="variant-tab" onclick="switchVariant(1)">б) Внутреннее касание</button>
             </div>
 
-            <!-- Вариант А: Внешнее касание -->
+            <!-- ВАРИАНТ А: Внешнее касание -->
             <div class="variant-content active" id="variant-0">
                 <div class="svg-container">
-                    <svg id="svg-a" width="650" height="250" viewBox="0 0 650 250">
-                        <!-- Подписи точек -->
-                        <text x="80" y="240" font-size="18" font-weight="bold" fill="#333">A</text>
-                        <text x="350" y="240" font-size="18" font-weight="bold" fill="#333">C</text>
-                        <text x="560" y="240" font-size="18" font-weight="bold" fill="#333">B</text>
-
+                    <svg id="svg-a" width="700" height="420" viewBox="0 0 700 420">
                         <!-- Отрезок AB -->
-                        <line id="line-ab-a" x1="80" y1="100" x2="560" y2="100" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay: 0s;"/>
-
-                        <!-- Точка C -->
-                        <circle id="point-c-a" cx="350" cy="100" r="6" fill="#ff6f00" class="point-marker" style="animation-delay: 1.2s;"/>
-
-                        <!-- Точка A -->
-                        <circle cx="80" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.3s;"/>
-
-                        <!-- Точка B -->
-                        <circle cx="560" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.6s;"/>
-
-                        <!-- Радиус AC (пунктир) -->
-                        <line id="line-ac-a" x1="80" y1="100" x2="350" y2="100" stroke="#42a5f5" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.5s;"/>
-                        <text x="215" y="85" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay: 1.5s;">радиус AC</text>
-
-                        <!-- Радиус CB (пунктир) -->
-                        <line id="line-cb-a" x1="350" y1="100" x2="560" y2="100" stroke="#ffa726" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.8s;"/>
-                        <text x="455" y="85" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay: 1.8s;">радиус CB</text>
-
-                        <!-- Окружность с центром A, радиус AC -->
-                        <circle id="circle-a-a" cx="80" cy="100" r="270" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle" style="animation-delay: 2s;"/>
-
-                        <!-- Окружность с центром B, радиус CB -->
-                        <circle id="circle-b-a" cx="560" cy="100" r="210" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle" style="animation-delay: 2.5s;"/>
-
-                        <!-- Точка касания C (подсветка) -->
-                        <circle cx="350" cy="100" r="10" fill="#4caf50" class="point-marker" style="animation-delay: 3.2s;"/>
-                        <text x="350" y="60" font-size="16" fill="#4caf50" font-weight="bold" class="fade-in" style="animation-delay: 3.2s;">точка касания</text>
-
-                        <!-- Подпись результата -->
-                        <text x="325" y="190" font-size="16" fill="#1a237e" font-weight="bold" class="fade-in" style="animation-delay: 3.5s;">Окружности касаются внешним образом!</text>
-                        <text x="325" y="210" font-size="14" fill="#555" class="fade-in" style="animation-delay: 3.8s;">Общая точка — только C</text>
+                        <line x1="230" y1="210" x2="470" y2="210" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay:0.3s"/>
+                        <!-- Точки -->
+                        <circle cx="230" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.5s"/>
+                        <circle cx="350" cy="210" r="5" fill="#ff6f00" class="point-marker" style="animation-delay:0.7s"/>
+                        <circle cx="470" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.6s"/>
+                        <!-- Подписи точек -->
+                        <text x="230" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.8s">A</text>
+                        <text x="350" y="245" font-size="18" font-weight="bold" fill="#ff6f00" class="fade-in" style="animation-delay:1s">C</text>
+                        <text x="470" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.9s">B</text>
+                        <!-- Окружность с центром A, радиус AC=120 -->
+                        <circle cx="230" cy="210" r="120" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.2s"/>
+                        <!-- Окружность с центром B, радиус CB=120 -->
+                        <circle cx="470" cy="210" r="120" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.8s"/>
+                        <!-- Точка касания C -->
+                        <circle cx="350" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
+                        <circle cx="350" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
+                        <!-- Подписи радиусов -->
+                        <text x="280" y="80" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">AC</text>
+                        <text x="410" y="80" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">CB</text>
+                        <!-- Результат -->
+                        <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внешним образом</text>
+                        <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только C</text>
                     </svg>
                 </div>
-
                 <div class="btn-container">
-                    <button class="btn btn-replay" onclick="replay('a')">🔁 Повторить</button>
-                </div>
-
-                <div class="section">
-                    <div class="section-label solution">✏️ Решение — внешний образ</div>
-                    <ol class="solution-steps" id="steps-a">
-                        <li class="solution-step">
-                            <span class="step-number">1</span>
-                            <div class="step-text">
-                                Берём отрезок AB и отмечаем на нём точку C
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">2</span>
-                            <div class="step-text">
-                                Строим окружность с центром в точке A и радиусом AC — это расстояние от A до C
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">3</span>
-                            <div class="step-text">
-                                Строим окружность с центром в точке B и радиусом CB — расстояние от C до B
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">4</span>
-                            <div class="step-text">
-                                Обе окружности проходят через точку C — это их <strong>общая точка</strong>!
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">5</span>
-                            <div class="step-text">
-                                Так как каждая окружность снаружи другой и они касаются в точке C — 
-                                это <strong>внешнее касание</strong>
-                            </div>
-                        </li>
-                    </ol>
+                    <button class="btn btn-replay" onclick="replay('a')">🔁 Повторить построение</button>
                 </div>
             </div>
 
-            <!-- Вариант Б: Внутреннее касание -->
+            <!-- ВАРИАНТ Б: Внутреннее касание -->
             <div class="variant-content" id="variant-1">
                 <div class="svg-container">
-                    <svg id="svg-b" width="650" height="250" viewBox="0 0 650 250">
-                        <!-- Подписи точек -->
-                        <text x="80" y="240" font-size="18" font-weight="bold" fill="#333">A</text>
-                        <text x="350" y="240" font-size="18" font-weight="bold" fill="#333">C</text>
-                        <text x="560" y="240" font-size="18" font-weight="bold" fill="#333">B</text>
-
+                    <svg id="svg-b" width="700" height="420" viewBox="0 0 700 420">
                         <!-- Отрезок AB -->
-                        <line id="line-ab-b" x1="80" y1="100" x2="560" y2="100" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay: 0s;"/>
-
-                        <!-- Точка C -->
-                        <circle id="point-c-b" cx="350" cy="100" r="6" fill="#ff6f00" class="point-marker" style="animation-delay: 1.2s;"/>
-
-                        <!-- Точка A -->
-                        <circle cx="80" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.3s;"/>
-
-                        <!-- Точка B -->
-                        <circle cx="560" cy="100" r="5" fill="#333" class="point-marker" style="animation-delay: 0.6s;"/>
-
-                        <!-- Радиус AB (пунктир) -->
-                        <line id="line-ab-rad-b" x1="80" y1="100" x2="560" y2="100" stroke="#42a5f5" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.5s;"/>
-                        <text x="320" y="85" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay: 1.5s;">радиус AB</text>
-
-                        <!-- Радиус CB (пунктир) -->
-                        <line id="line-cb-rad-b" x1="350" y1="100" x2="560" y2="100" stroke="#ffa726" stroke-width="2" stroke-dasharray="8,4" class="fade-in" style="animation-delay: 1.8s;"/>
-                        <text x="455" y="85" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay: 1.8s;">радиус CB</text>
-
-                        <!-- Большая окружность — центр A, радиус AB -->
-                        <circle id="circle-ab-b" cx="80" cy="100" r="480" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle" style="animation-delay: 2s;"/>
-
-                        <!-- Малая окружность — центр C, радиус CB -->
-                        <circle id="circle-cb-b" cx="350" cy="100" r="210" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle" style="animation-delay: 2.5s;"/>
-
-                        <!-- Точка касания B (подсветка) -->
-                        <circle cx="560" cy="100" r="10" fill="#4caf50" class="point-marker" style="animation-delay: 3.2s;"/>
-                        <text x="560" y="60" font-size="16" fill="#4caf50" font-weight="bold" class="fade-in" style="animation-delay: 3.2s;">точка касания</text>
-
-                        <!-- Подпись результата -->
-                        <text x="325" y="190" font-size="16" fill="#1a237e" font-weight="bold" class="fade-in" style="animation-delay: 3.5s;">Окружности касаются внутренним образом!</text>
-                        <text x="325" y="210" font-size="14" fill="#555" class="fade-in" style="animation-delay: 3.8s;">Общая точка — только B. Малая окружность внутри большой!</text>
+                        <line x1="230" y1="210" x2="430" y2="210" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay:0.3s"/>
+                        <!-- Точки -->
+                        <circle cx="230" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.5s"/>
+                        <circle cx="310" cy="210" r="5" fill="#ff6f00" class="point-marker" style="animation-delay:0.7s"/>
+                        <circle cx="430" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.6s"/>
+                        <!-- Подписи точек -->
+                        <text x="230" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.8s">A</text>
+                        <text x="310" y="245" font-size="18" font-weight="bold" fill="#ff6f00" class="fade-in" style="animation-delay:1s">C</text>
+                        <text x="430" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.9s">B</text>
+                        <!-- Большая окружность — центр A, радиус AB=200 -->
+                        <circle cx="230" cy="210" r="200" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle-lg" style="animation-delay:1.2s"/>
+                        <!-- Малая окружность — центр C, радиус CB=120 -->
+                        <circle cx="310" cy="210" r="120" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.8s"/>
+                        <!-- Точка касания B -->
+                        <circle cx="430" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
+                        <circle cx="430" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
+                        <!-- Подписи радиусов -->
+                        <text x="330" y="75" font-size="14" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">AB</text>
+                        <text x="380" y="260" font-size="14" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">CB</text>
+                        <!-- Результат -->
+                        <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внутренним образом</text>
+                        <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только B. Малая окружность внутри большой.</text>
                     </svg>
                 </div>
-
                 <div class="btn-container">
-                    <button class="btn btn-replay" onclick="replay('b')">🔁 Повторить</button>
-                </div>
-
-                <div class="section">
-                    <div class="section-label solution">✏️ Решение — внутренний образ</div>
-                    <ol class="solution-steps" id="steps-b">
-                        <li class="solution-step">
-                            <span class="step-number">1</span>
-                            <div class="step-text">
-                                Берём отрезок AB и отмечаем на нём точку C
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">2</span>
-                            <div class="step-text">
-                                Строим окружность с центром в точке A и радиусом AB — от A до самого конца отрезка
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">3</span>
-                            <div class="step-text">
-                                Строим окружность с центром в точке C и радиусом CB — от C до B
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">4</span>
-                            <div class="step-text">
-                                Обе окружности проходят через точку B — это их <strong>общая точка</strong>!
-                            </div>
-                        </li>
-                        <li class="solution-step">
-                            <span class="step-number">5</span>
-                            <div class="step-text">
-                                Малая окружность (центр C) лежит внутри большой (центр A), 
-                                и они касаются в точке B — это <strong>внутреннее касание</strong>
-                            </div>
-                        </li>
-                    </ol>
+                    <button class="btn btn-replay" onclick="replay('b')">🔁 Повторить построение</button>
                 </div>
             </div>
 
+            <div class="section">
+                <div class="section-label solution">Решение — шаг за шагом</div>
+                <ol class="solution-steps" id="steps">
+                    <li class="solution-step"><span class="step-number">1</span><div class="step-text">Берём отрезок AB и отмечаем на нём точку C</div></li>
+                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим первую окружность с центром в одной из точек</div></li>
+                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим вторую окружность с центром в другой точке</div></li>
+                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через одну точку — это их <strong>общая точка</strong></div></li>
+                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Так как у них только одна общая точка — это <strong>касание</strong>!</div></li>
+                </ol>
+            </div>
         </div>
-
-        <div class="footer">
-            Математика · 5 класс · Для доченьки Кати
-        </div>
-
+        <div class="footer">Математика · 5 класс · Для доченьки Кати</div>
     </div>
 
     <script>
-        // Переключение вариантов
         function switchVariant(index) {
-            // Обновляем кнопки
-            const tabs = document.querySelectorAll('.variant-tab');
-            tabs.forEach((t, i) => {
+            document.querySelectorAll('.variant-tab').forEach((t, i) => {
                 t.classList.toggle('active', i === index);
             });
-            // Обновляем контент
-            const contents = document.querySelectorAll('.variant-content');
-            contents.forEach((c, i) => {
+            document.querySelectorAll('.variant-content').forEach((c, i) => {
                 c.classList.toggle('active', i === index);
-                // Если включаем вариант — перезапускаем анимацию
                 if (i === index) {
                     setTimeout(() => replay(i === 0 ? 'a' : 'b'), 100);
-                    // Показываем шаги
-                    const steps = document.querySelectorAll(`#variant-${index} .solution-step`);
-                    steps.forEach((step, si) => {
-                        step.classList.remove('visible');
-                        setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
-                    });
+                    animateSteps();
                 }
             });
         }
 
-        // Перезапуск анимации
         function replay(variant) {
-            // Сбрасываем все анимации
-            const svg = document.getElementById(`svg-${variant}`);
-            const elements = svg.querySelectorAll('.draw-line, .draw-circle, .fade-in, .point-marker');
-            
-            elements.forEach(el => {
-                // Удаляем и добавляем класс обратно
-                const classes = el.className.baseVal || el.getAttribute('class') || '';
-                const style = el.getAttribute('style') || '';
-                
-                // Создаём копию без анимации
-                const clone = el.cloneNode(true);
-                clone.removeAttribute('class');
-                clone.removeAttribute('style');
-                el.parentNode.replaceChild(clone, el);
-            });
-
-            // Возвращаем анимацию через setTimeout
-            setTimeout(() => {
-                // Перезапускаем линии
-                const drawLines = svg.querySelectorAll('.draw-line');
-                drawLines.forEach(el => {
-                    const style = el.style;
-                    style.animation = 'none';
-                    el.offsetHeight; // reflow
-                    style.animation = '';
-                });
-
-                const drawCircles = svg.querySelectorAll('.draw-circle');
-                drawCircles.forEach(el => {
-                    const style = el.style;
-                    style.animation = 'none';
-                    el.offsetHeight;
-                    style.animation = '';
-                });
-
-                const fadeInElements = svg.querySelectorAll('.fade-in');
-                fadeInElements.forEach(el => {
-                    const style = el.style;
-                    style.animation = 'none';
-                    el.offsetHeight;
-                    style.animation = '';
-                });
-
-                const pointMarkers = svg.querySelectorAll('.point-marker');
-                pointMarkers.forEach(el => {
-                    const style = el.style;
-                    style.animation = 'none';
-                    el.offsetHeight;
-                    style.animation = '';
-                });
-
-                // Показываем шаги решения
-                const variantIndex = variant === 'a' ? 0 : 1;
-                const steps = document.querySelectorAll(`#variant-${variantIndex} .solution-step`);
-                steps.forEach((step, si) => {
-                    step.classList.remove('visible');
-                    setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
-                });
-            }, 50);
+            var svg = document.getElementById('svg-' + variant);
+            if (!svg) return;
+            var parent = svg.parentNode;
+            var clone = svg.cloneNode(true);
+            parent.replaceChild(clone, svg);
         }
 
-        // Авто-анимация при загрузке
-        window.addEventListener('load', () => {
-            setTimeout(() => {
+        function animateSteps() {
+            var steps = document.querySelectorAll('.solution-step');
+            steps.forEach(function(step, i) {
+                step.classList.remove('visible');
+                setTimeout(function() { step.classList.add('visible'); }, 1800 + i * 500);
+            });
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(function() {
                 replay('a');
-                const steps = document.querySelectorAll('#variant-0 .solution-step');
-                steps.forEach((step, si) => {
-                    setTimeout(() => step.classList.add('visible'), 1500 + si * 500);
-                });
+                animateSteps();
             }, 300);
         });
     </script>
