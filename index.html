@@ -338,7 +338,7 @@ body::before{
 @keyframes starPop{from{transform:scale(.3) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
 .stars-text{font-size:13px;font-weight:800;color:#4c5a72;margin-top:8px}
 .aside-close{display:none}
-.scrim{position:fixed;inset:0;background:rgba(40,30,10,.42);backdrop-filter:blur(2px);z-index:60;
+.scrim{position:fixed;inset:0;background:rgba(40,30,10,.5);z-index:60;
   opacity:0;pointer-events:none;transition:opacity .3s}
 @media(max-width:1099px){
   .desk{grid-template-columns:1fr}
@@ -391,6 +391,16 @@ body::before{
   .nb-sheet{padding-left:58px;padding-right:12px}.nb-sheet::before{left:44px}.nb-sheet::after{left:40px}
   .step-num{left:-40px}.chip .lb{display:none}.chip{padding:9px 13px}.tb-controls{gap:8px}.toolbar{padding:10px}.fig{margin-left:-46px;margin-right:-2px}.ruler{display:none}
 }
+.nb-scroll{max-height:none;overflow:visible}.step{scroll-margin-top:calc(var(--stickH) + 16px)}
+@media(max-width:760px){
+ .toolbar{position:fixed;left:8px;right:8px;top:auto;bottom:calc(8px + env(safe-area-inset-bottom,0px));margin:0;padding:8px;z-index:50;border-radius:16px}
+ .tb-controls{flex-wrap:nowrap;justify-content:space-between;gap:6px}
+ .tb-controls .chip{padding:10px 12px;font-size:17px}
+ .step-label,[data-action="condition"],#restartBtn{display:none}
+ .pencil-btn{margin:0 22px 0 2px;padding:11px 12px 11px 26px;white-space:nowrap;font-size:15px}
+ .wrap{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+ .toasts{top:12px}
+}
 </style>
 </head>
 <body>
@@ -400,6 +410,7 @@ body::before{
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
+  <div class="scrim" id="scrim" data-action="drawer-close" aria-hidden="true"></div>
 
   <!-- ДОСКА -->
   <header class="board-frame" id="boardFrame">
@@ -441,7 +452,7 @@ body::before{
   <div class="toolbar" id="toolbar">
     <div class="tb-controls">
       <button class="chip" data-action="condition" title="Показать условие на доске">📋 <span class="lb">Условие</span></button>
-      <button class="chip" id="prevBtn" data-action="prev" title="Шаг назад">◀ Назад</button>
+      <button class="chip" id="prevBtn" data-action="prev" title="Шаг назад">◀ <span class="lb">Назад</span></button>
       <button class="pencil-btn" id="nextBtn" data-action="next" title="Следующий шаг"><span id="nextLabel">Дальше ▶</span></button>
       <button class="chip" id="autoBtn" data-action="auto" aria-pressed="false" title="Автопоказ шагов каждые 7 секунд">
         <svg class="auto-ring" id="autoRing" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/></svg>
@@ -489,13 +500,13 @@ body::before{
   </footer>
 </div>
 
-<div class="scrim" id="scrim" data-action="drawer-close" aria-hidden="true"></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <div class="sr-only" id="srLive" aria-live="polite"></div>
 
 <script>
 'use strict';
 /* ================= данные урока ================= */
+var nbTouched=false,nbInView=false,pendingAuto=false;
 var svg=null,token=0,fast=false,INK='#1e3a7a',BL='#2e6fe0',RD='#d94040',AMB='#c77f0a',GR='#2f9e5f',GY='#8a7c5c',FF='Caveat,cursive';
 function E(t,a){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e}
 function run(d,f,done){d=(fast||reduced)?0:d;var my=token;if(!d){f(1);done&&done();return}var s=performance.now();(function g(n){if(my!==token)return;var t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(g):done&&done()})(s)}
@@ -752,7 +763,7 @@ function renderNotebook(){
   nbSheet.innerHTML=html;
   var f=$id('figSvg'); if(f) drawFig(f,p,cur);
   var target=nbSheet.querySelector('.step.cur');
-  if(target) nbScroll.scrollTo({top:Math.max(0,target.offsetTop-70), behavior:reduced?'auto':'smooth'});
+  if(target && nbTouched && cur>0) target.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
 }
 
 function renderProgress(){
@@ -781,7 +792,7 @@ function updateControls(){
   autoBtn.disabled = false;
   autoBtn.classList.toggle('on',state.auto);
   autoBtn.setAttribute('aria-pressed',String(state.auto));
-  autoLabel.textContent = state.auto ? '⏸ Пауза' : '⏵ Авто';
+  autoLabel.innerHTML = state.auto ? '⏸ <span class="lb">Пауза</span>' : '⏵ <span class="lb">Авто</span>';
   restartBtn.disabled = cur===0 && prog.max===0;
   soundBtn.innerHTML = (store.sound?'🔊':'🔇')+' <span class="lb">'+(store.sound?'Звук вкл':'Звук выкл')+'</span>';
   soundBtn.classList.toggle('muted',!store.sound);
@@ -792,7 +803,7 @@ function renderAll(){
 }
 
 /* ================= действия ================= */
-function goTo(i,byAuto){
+function goTo(i,byAuto){ nbTouched=true;
   var p=curP(), prog=getProg(p.id), last=p.steps.length-1;
   i=Math.max(0,Math.min(last,i));
   if(!byAuto) stopAuto(false);
@@ -839,7 +850,7 @@ function restartRing(){
   void autoRing.getBoundingClientRect();
   autoRing.classList.add('run');
 }
-function scheduleAuto(){
+function scheduleAuto(dl){
   restartRing();
   autoTimer=setTimeout(function(){
     var p=curP(), prog=getProg(p.id), last=p.steps.length-1;
@@ -848,9 +859,9 @@ function scheduleAuto(){
       if(prog.step<last) scheduleAuto();
       else { stopAuto(true); sfx.ding(); }
     } else stopAuto(true);
-  },7000);
+  },dl||7000);
 }
-function stopAuto(scrollQuiz){
+function stopAuto(scrollQuiz){ pendingAuto=false;
   if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
   if(state.auto){ state.auto=false; autoRing.classList.remove('run'); updateControls(); }
   if(scrollQuiz) scrollToQuiz();
@@ -858,7 +869,8 @@ function stopAuto(scrollQuiz){
 function startAuto(){
   var p=curP(), prog=getProg(p.id);
   if(state.auto || prog.step>=p.steps.length-1) return;
-  state.auto=true; scheduleAuto(); updateControls();
+  if(!nbInView){ pendingAuto=true; return; }
+  pendingAuto=false; state.auto=true; scheduleAuto(prog.step===0?2500:7000); updateControls();
 }
 function toggleAuto(){
   var p=curP(), prog=getProg(p.id);
@@ -968,7 +980,7 @@ if(mqMobile.addEventListener) mqMobile.addEventListener('change',onMqChange);
 else if(mqMobile.addListener) mqMobile.addListener(onMqChange);
 
 function setStick(){
-  document.documentElement.style.setProperty('--stickH', toolbar.offsetHeight+'px');
+  document.documentElement.style.setProperty('--stickH', (window.innerWidth<=760?0:toolbar.offsetHeight)+'px');
 }
 if(window.ResizeObserver){ new ResizeObserver(setStick).observe(toolbar); }
 window.addEventListener('resize',setStick);
@@ -983,7 +995,9 @@ window.addEventListener('resize',setStick);
   var p=curP(), prog=getProg(p.id), last=p.steps.length-1;
   prog.step=Math.max(0,Math.min(last,prog.step));
   prog.max=Math.max(prog.step,Math.min(last,prog.max));
-  renderBoard(); renderAll(); setStick(); announce(); setTimeout(startAuto,1400);
+  renderBoard(); renderAll(); setStick(); announce(); pendingAuto=true;
+  if(window.IntersectionObserver){ new IntersectionObserver(function(en){ nbInView=en[0].isIntersecting; if(nbInView&&pendingAuto) startAuto(); },{rootMargin:'0px 0px -35% 0px'}).observe($id('notebook')); }
+  else { nbInView=true; startAuto(); }
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(setStick);
   setTimeout(function(){ toast('Привет, Катя! Смотри, как строится чертёж 👋'); },900);
 })();
