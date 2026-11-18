@@ -507,65 +507,72 @@ body::before{
 'use strict';
 /* ================= данные урока ================= */
 var nbTouched=false,nbInView=false,pendingAuto=false;
-var svg=null,token=0,fast=false,INK='#1e3a7a',BL='#2e6fe0',RD='#d94040',AMB='#c77f0a',GR='#2f9e5f',GY='#8a7c5c',FF='Caveat,cursive';
-function E(t,a){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e}
+var svg=null,token=0,fast=false,INK='#1e3a7a',BL='#2e6fe0',RD='#d94040',GR='#2f9e5f',GY='#8a7c5c',FF='Caveat,cursive',CX=260,CY=280,RR=200;
+function E(t,a,par){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);(par||svg).appendChild(e);return e}
 function run(d,f,done){d=(fast||reduced)?0:d;var my=token;if(!d){f(1);done&&done();return}var s=performance.now();(function g(n){if(my!==token)return;var t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(g):done&&done()})(s)}
 function seq(a){var my=token;(function n(i){if(i>=a.length||my!==token)return;run(a[i][0],a[i][1],function(){n(i+1)})})(0)}
+function pol(cx,cy,r,th){var a=th*Math.PI/180;return[cx+r*Math.cos(a),cy-r*Math.sin(a)]}
+function T(x,y,txt,c,sz,anc,cls,par){var e=E('text',{x:x,y:y,'text-anchor':anc||'middle','font-size':sz||26,'font-weight':700,fill:c,'font-family':FF,'class':cls||''},par);e.textContent=txt;return e}
 var P={
+ wipe:function(){return[1,function(){[].slice.call(svg.children).forEach(function(e){if(e.getAttribute('class')!=='bg')e.remove()})}]},
+ clear:function(sel){var L;return[450,function(t){L=L||[].slice.call(svg.querySelectorAll(sel||'.tmp'));L.forEach(function(e){e.style.opacity=1-t;if(t>=1)e.remove()})}]},
  line:function(x1,y1,x2,y2,c,w,d){var e;return[d||500,function(t){e=e||E('line',{x1:x1,y1:y1,x2:x1,y2:y1,stroke:c,'stroke-width':w||3,'stroke-linecap':'round'});e.setAttribute('x2',x1+(x2-x1)*t);e.setAttribute('y2',y1+(y2-y1)*t)}]},
- dot:function(x,y,c,txt){var e,l;return[450,function(t){if(!e){e=E('circle',{cx:x,cy:y,r:0,fill:c});l=E('text',{x:x,y:y+36,'text-anchor':'middle','font-size':32,'font-weight':700,fill:c,'font-family':FF,opacity:0});l.textContent=txt}e.setAttribute('r',7*t);l.setAttribute('opacity',t)}]},
- lab:function(x,y,txt,c,sz,anc,tmp){var e;return[350,function(t){if(!e){e=E('text',{x:x,y:y,'text-anchor':anc||'middle','font-size':sz||26,'font-weight':700,fill:c,'font-family':FF,opacity:0,'class':tmp?'tmp':''});e.textContent=txt}e.setAttribute('opacity',t)}]},
- ring:function(x,y,c){var e;return[700,function(t){e=e||E('circle',{cx:x,cy:y,r:8,fill:'none',stroke:c,'stroke-width':4,'class':'tmp'});e.setAttribute('r',8+10*Math.sin(t*Math.PI)+16*t)}]},
- clear:function(){var L;return[450,function(t){L=L||[].slice.call(svg.querySelectorAll('.tmp'));L.forEach(function(e){e.style.opacity=1-t;if(t>=1)e.remove()})}]},
- compass:function(cx,cy,r,c,a0){var e,l,p,L=2*Math.PI*r;return[2400,function(t){if(!e){e=E('circle',{cx:cx,cy:cy,r:r,fill:'none',stroke:c,'stroke-width':3.5,'stroke-linecap':'round','stroke-dasharray':L,transform:'rotate('+a0*180/Math.PI+' '+cx+' '+cy+')'});l=E('line',{x1:cx,y1:cy,stroke:c,'stroke-width':2,'stroke-dasharray':'6 5'});p=E('circle',{r:6,fill:c})}
-  e.setAttribute('stroke-dashoffset',L*(1-t));var th=a0+t*2*Math.PI,x=cx+r*Math.cos(th),y=cy+r*Math.sin(th),v=t<1?1:0;l.setAttribute('x2',x);l.setAttribute('y2',y);p.setAttribute('cx',x);p.setAttribute('cy',y);l.setAttribute('opacity',v);p.setAttribute('opacity',v)}]},
- touch:function(x,y){var a,b;return[500,function(t){if(!a){a=E('circle',{cx:x,cy:y,r:0,fill:GR});b=E('circle',{cx:x,cy:y,r:0,fill:'#fff'})}a.setAttribute('r',15*t);b.setAttribute('r',7*t)}]},
- rect:function(x,y,w,h,c,txt,sz){var r,l;return[900,function(t){if(!r){r=E('rect',{x:x,y:y,width:0,height:h,rx:8,fill:c});l=E('text',{x:x+w/2,y:y+h/2+9,'text-anchor':'middle','font-size':sz||30,'font-weight':700,fill:'#fff','font-family':FF,opacity:0});l.textContent=txt}r.setAttribute('width',w*t);l.setAttribute('opacity',t>.6?(t-.6)/.4:0)}]}
+ letters:function(a,c){var l;return[350,function(t){if(!l)l=a.map(function(q){return T(q[0],q[1],q[2],c,32)});l.forEach(function(e){e.setAttribute('opacity',t)})}]},
+ lab:function(x,y,txt,c,sz,anc,tmp){var e;return[350,function(t){e=e||T(x,y,txt,c,sz,anc,tmp?'tmp':'');e.setAttribute('opacity',t)}]},
+ ring:function(x,y,c){var e;return[550,function(t){e=e||E('circle',{cx:x,cy:y,r:8,fill:'none',stroke:c,'stroke-width':4,'class':'tmp'});e.setAttribute('r',8+10*Math.sin(t*Math.PI)+14*t)}]},
+ hl:function(x,y,c){var e;return[350,function(t){e=e||E('circle',{cx:x,cy:y,r:0,fill:'none',stroke:c,'stroke-width':4});e.setAttribute('r',18*t)}]},
+ pt:function(x,y,c){var e;return[300,function(t){e=e||E('circle',{cx:x,cy:y,fill:c});e.setAttribute('r',8*t)}]},
+ arc:function(cx,cy,r,deg,flip,c){var e;return[500,function(t){if(!e){var p0=pol(cx,cy,r,flip?180:0),p1=pol(cx,cy,r,flip?180-deg:deg);e=E('path',{d:'M'+p0+' A'+r+' '+r+' 0 0 '+(flip?1:0)+' '+p1,fill:'none',stroke:c,'stroke-width':4,pathLength:1,'stroke-dasharray':1})}e.setAttribute('stroke-dashoffset',1-t)}]},
+ protr:function(cx,cy,R){var g;return[900,function(t){if(!g){g=E('g',{'class':'pr'});
+  E('path',{d:'M'+(cx-R)+' '+cy+' A'+R+' '+R+' 0 0 1 '+(cx+R)+' '+cy+' L'+(cx+R)+' '+(cy+20)+' L'+(cx-R)+' '+(cy+20)+' Z',fill:'rgba(150,205,255,.38)',stroke:INK,'stroke-width':2.5,'stroke-linejoin':'round'},g);
+  E('path',{d:'M'+(cx-R+70)+' '+cy+' A'+(R-70)+' '+(R-70)+' 0 0 1 '+(cx+R-70)+' '+cy,fill:'none',stroke:INK,'stroke-width':1.2},g);
+  for(var d=0;d<=180;d+=5){var a=pol(cx,cy,R,d),b=pol(cx,cy,R-(d%10?9:16),d);E('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:INK,'stroke-width':d%10?1:1.6},g);
+   if(d%10==0){var o=pol(cx,cy,R-32,d),i=pol(cx,cy,R-56,d);T(o[0],o[1]+5,d,INK,15,'middle','',g);T(i[0],i[1]+5,180-d,RD,13,'middle','',g)}}
+  E('path',{d:'M'+(cx-9)+' '+cy+'H'+(cx+9)+'M'+cx+' '+(cy-9)+'V'+(cy+9),stroke:INK,'stroke-width':2},g)}
+  g.setAttribute('opacity',t);g.setAttribute('transform','translate(0 '+(-30*(1-t))+')')}]},
+ mini:function(i,deg){var g;return[320,function(t){if(!g){var ox=14+(i%5)*100,oy=i<5?100:272,c=deg<90?BL:deg==90?GR:RD,p=pol(ox,oy,78,deg),q=pol(ox,oy,24,deg);g=E('g',{});
+  E('line',{x1:ox,y1:oy,x2:ox+78,y2:oy,stroke:INK,'stroke-width':3,'stroke-linecap':'round'},g);E('line',{x1:ox,y1:oy,x2:p[0],y2:p[1],stroke:c,'stroke-width':3,'stroke-linecap':'round'},g);
+  E('path',{d:'M'+(ox+24)+' '+oy+' A24 24 0 0 0 '+q,fill:'none',stroke:c,'stroke-width':2.5},g);T(ox+36,oy+34,deg+'°',c,30,'middle','',g);T(ox+36,oy+60,deg<90?'острый':deg==90?'прямой':'тупой',c,22,'middle','',g)}g.setAttribute('opacity',t)}]}
 };
 function grid(p){var v=p.vb.split(' ').map(Number),g=p.g,c=g[0],d='',x,y;
  for(x=v[0]+(((g[1]-v[0])%c)+c)%c;x<=v[0]+v[2];x+=c)d+='M'+x+' '+v[1]+'V'+(v[1]+v[3]);
  for(y=v[1]+(((g[2]-v[1])%c)+c)%c;y<=v[1]+v[3];y+=c)d+='M'+v[0]+' '+y+'H'+(v[0]+v[2]);
- E('rect',{x:v[0],y:v[1],width:v[2],height:v[3],fill:'#fffef8'});E('path',{d:d,fill:'none',stroke:'#c3d7ee','stroke-width':1.5,'vector-effect':'non-scaling-stroke'})}
-
-function circ(a){
- var A=230,B=a?470:430,C=a?350:310,R=a?350:430,r1=a?120:200,x2=a?470:310,q=a?350:430,T=q;
- var intro='На отрезке <b>AB</b> отметьте точку <b>C</b>.';
- var ta=(a?'<b class="hl">а)</b>':'<b>а)</b>')+' Постройте две окружности: с центром <b>A</b> и радиусом <b>AC</b> и с центром <b>B</b> и радиусом <b>CB</b>. Построенные окружности имеют только одну общую точку <b>C</b>. Говорят, что они касаются <b class="hl">внешним образом</b>.';
- var tb=(a?'<b>б)</b>':'<b class="hl">б)</b>')+' Постройте две окружности: с центром <b>A</b> и радиусом <b>AB</b> и с центром <b>C</b> и радиусом <b>CB</b>. Построенные окружности имеют только одну общую точку <b>B</b>. Говорят, что они касаются <b class="hl">внутренним образом</b>.';
- return {id:a?'c416a':'c416b',emoji:a?'⭕':'🔵',short:a?'№ 416 а':'№ 416 б',sub:a?'внешнее касание':'внутреннее касание',
-  title:a?'№ 416 а · внешнее касание':'№ 416 б · внутреннее касание',
-  condition:[intro,ta,tb],dim:[a?2:1],vb:a?'90 0 520 420':'10 0 640 420',g:[20,10,10],
-  steps:[
-   {t:'Читаем условие',talk:a?'Нужно построить две окружности. Первая — с центром <b>A</b> и радиусом <b>AC</b>, вторая — с центром <b>B</b> и радиусом <b>CB</b>. Общая точка у них должна быть только одна — <b>C</b>.':'Первая окружность — с центром <b>A</b> и радиусом <b>AB</b>, вторая — с центром <b>C</b> и радиусом <b>CB</b>. Общая точка у них только одна — <b>B</b>.',rule:'Окружность задаётся центром и радиусом.'},
-   {t:'Чертим отрезок',talk:'Проводим отрезок <b>AB</b> и отмечаем на нём точку <b>C</b> — между A и B.',rule:'Радиус — расстояние от центра до любой точки окружности.',
-    d:function(){seq([P.line(A,210,B,210,INK,4,700),P.dot(A,210,INK,'A'),P.dot(C,210,AMB,'C'),P.dot(B,210,INK,'B')])}},
-   {t:a?'Первая окружность':'Большая окружность',talk:a?'Центр — точка <b>A</b>, точка радиуса — <b>C</b>. Ставим иглу циркуля в A, грифель — в C и рисуем <b>синюю</b> окружность.':'Центр — точка <b>A</b>, радиус — весь отрезок <b>AB</b>. Иглу — в A, грифель — в B, рисуем <b>синюю</b> окружность.',
-    d:function(){seq([P.ring(A,210,BL),P.lab(A,290,'центр',BL,26,'middle',1),P.ring(R,210,BL),P.lab(R,290,'точка радиуса',BL,26,'middle',1),P.clear(),P.compass(A,210,r1,BL,0)])}},
-   {t:a?'Вторая окружность':'Малая окружность',talk:a?'Центр — точка <b>B</b>, радиус — <b>CB</b>. Иглу — в B, грифель — в C. Рисуем <b>красную</b> окружность.':'Центр — точка <b>C</b>, радиус — <b>CB</b>. Иглу — в C, грифель — в B. Рисуем <b>красную</b> окружность.',
-    d:function(){seq([P.ring(x2,210,RD),P.lab(x2,290,'центр',RD,26,'middle',1),P.ring(q,210,RD),P.lab(q,290,'точка радиуса',RD,26,'middle',1),P.clear(),a?P.compass(470,210,120,RD,Math.PI):P.compass(310,210,120,RD,0)])}},
-   {t:'Вывод',talk:a?'Окружности встретились в одной-единственной точке <b>C</b> — она лежит на отрезке между центрами. Каждая окружность снаружи другой: это <b>внешнее касание</b>.':'Окружности встретились в одной точке <b>B</b>. Малая окружность лежит внутри большой: это <b>внутреннее касание</b>.',
-    math:a?'AB = AC + CB → <span class="circ">внешнее касание</span>':'AC = AB − CB → <span class="circ">внутреннее касание</span>',answer:true,
-    rule:a?'Внешнее касание: расстояние между центрами равно сумме радиусов.':'Внутреннее касание: расстояние между центрами равно разности радиусов.',
-    d:function(){seq([P.touch(T,210),a?P.lab(350,330,'общая точка C',GR,30):P.lab(452,206,'общая точка B',GR,30,'start')])}}
-  ]};
-}
-var PROBLEMS=[circ(true),circ(false),{
- id:'t3331',emoji:'🚶',short:'№ 3.331',sub:'два друга навстречу',title:'№ 3.331 · Два друга навстречу друг другу',
- condition:['Расстояние между домами двух друзей — <b class="hl">1 км 800 м</b>.','Они одновременно вышли навстречу друг другу. Один шёл со скоростью <b class="hl">84 м/мин</b>, другой — <b class="hl">на 12 м/мин быстрее</b>.','Какое расстояние будет между друзьями через <b class="hl">6 минут</b> после выхода?'],
- vb:'10 60 680 295',g:[20,0,0],
+ E('rect',{x:v[0],y:v[1],width:v[2],height:v[3],fill:'#fffef8','class':'bg'});E('path',{d:d,fill:'none',stroke:'#c3d7ee','stroke-width':1.5,'vector-effect':'non-scaling-stroke','class':'bg'})}
+function meas(deg,flip,n,L){return function(){
+ var vx=CX,vy=CY,th=flip?180-deg:deg,dr=flip?-1:1,b=[vx+dr*235,vy],a=pol(vx,vy,235,th),la=pol(vx,vy,258,th),rp=pol(vx,vy,flip?RR-56:RR-32,th),zx=vx+dr*RR;
+ seq([P.wipe(),P.line(vx,vy,b[0],b[1],INK,4,450),P.line(vx,vy,a[0],a[1],INK,4,450),P.letters([[vx,vy+46,L[0]],[b[0],vy+46,L[1]],[la[0],la[1]+10,L[2]]],INK),P.protr(vx,vy,RR),
+  P.ring(vx,vy,RD),P.lab(vx,vy+80,'центр',RD,26,'middle',1),P.ring(zx,vy,RD),P.lab(zx,vy+80,'ноль',RD,26,'middle',1),P.clear(),
+  P.hl(rp[0],rp[1],RD),P.arc(vx,vy,60,deg,flip,RD),P.lab(CX,44,'∠'+n+' = '+deg+'°',RD,38)])}}
+function build(deg){return function(){
+ var vx=CX,vy=CY,a=pol(vx,vy,235,deg),rp=pol(vx,vy,RR+8,deg),lp=pol(vx,vy,RR+36,deg);
+ seq([P.wipe(),P.line(vx,vy,vx+235,vy,INK,4,450),P.letters([[vx,vy+46,'O'],[vx+235,vy+46,'B']],INK),P.protr(vx,vy,RR),
+  P.ring(vx,vy,RD),P.lab(vx,vy+80,'центр',RD,26,'middle',1),P.ring(vx+RR,vy,RD),P.lab(vx+RR,vy+80,'ноль',RD,26,'middle',1),P.clear(),
+  P.pt(rp[0],rp[1],RD),P.lab(lp[0],lp[1]+8,deg+'°',RD,32),P.clear('.pr'),P.line(vx,vy,a[0],a[1],RD,4,500),P.arc(vx,vy,60,deg,false,RD),P.lab(CX,44,'∠AOB = '+deg+'°',RD,38)])}}
+var ANG=[90,50,30,60,100,95,105,45,135,15];
+var VB='0 0 520 380',R_ACUTE='Острый угол меньше 90°, прямой равен 90°, тупой больше 90°.';
+var PROBLEMS=[{
+ id:'t424',emoji:'📐',short:'№ 424',sub:'измеряем углы',title:'№ 424 · Измеряем углы транспортиром',
+ condition:['С помощью транспортира измерьте углы на рисунке 77 и сделайте в тетради соответствующие записи.'],vb:VB,g:[20,0,0],
  steps:[
-  {t:'Читаем условие',talk:'Дома стоят на расстоянии 1 км 800 м. Друзья вышли одновременно навстречу друг другу: один идёт 84 м/мин, другой — на 12 м/мин быстрее. Найти нужно расстояние между ними через 6 минут.',rule:'Читай задачу дважды: что известно и что нужно найти.'},
-  {t:'Переводим в метры',talk:'Скорости даны в метрах в минуту, поэтому расстояние тоже запишем в метрах: 1 км = 1000 м.',math:'1 км 800 м = <span class="circ">1800 м</span>',rule:'Единицы должны быть одинаковыми: 1 км = 1000 м.',
-   d:function(){seq([P.lab(30,122,'🏠',INK,36),P.lab(670,122,'🏠',INK,36),P.rect(60,90,580,44,GY,'1 км 800 м = 1800 м',34)])}},
-  {t:'Скорость второго друга',talk:'Он идёт на 12 м/мин быстрее первого — значит, прибавляем.',math:'84 + 12 = <span class="circ">96</span> (м/мин)',
-   d:function(){seq([P.line(70,225,210,225,BL,6,600),P.lab(140,270,'84 м/мин',BL,34),P.line(630,225,490,225,RD,6,600),P.lab(560,270,'96 м/мин',RD,34)])}},
-  {t:'Скорость сближения',talk:'Идут навстречу — скорости складываются. Каждую минуту расстояние между друзьями сокращается на 180 м.',math:'84 + 96 = <span class="circ">180</span> (м/мин)',rule:'Навстречу — скорости складываем: v₁ + v₂.',
-   d:function(){seq([P.lab(350,190,'вместе: 84 + 96 = 180 м/мин',GR,32)])}},
-  {t:'Прошли вместе за 6 минут',talk:'Путь равен скорости, умноженной на время.',math:'180 · 6 = <span class="circ">1080</span> (м)',rule:'Путь = скорость × время: S = v · t.',
-   d:function(){seq([P.rect(60,298,340,44,BL,'180 × 6 = 1080 м',34)])}},
-  {t:'Сколько осталось',talk:'Из всего расстояния вычитаем то, что друзья уже прошли вместе.',math:'1800 − 1080 = <span class="circ">720</span> (м)',rule:'Осталось = всё расстояние − пройденное.',
-   d:function(){seq([P.line(400,134,400,298,GY,3,300),P.rect(400,298,240,44,GR,'1800 − 1080 = 720 м',28)])}},
-  {t:'Ответ',talk:'Через 6 минут между друзьями будет 720 метров.',math:'Ответ: <span class="circ">720 м</span> 🚶',answer:true}
+  {t:'Читаем условие',talk:'Нужно измерить транспортиром четыре угла на рисунке 77: <b>AOB</b>, <b>CDE</b>, <b>MNK</b> и <b>TRS</b> — и записать результаты в тетрадь.',rule:'Углы измеряют транспортиром в градусах (°).'},
+  {t:'Знакомимся с транспортиром',talk:'У транспортира есть <b>центр</b> (крестик посередине), <b>нулевая линия</b> (нижний край) и <b>шкала</b> от 0° до 180°. Шкал две: числа на них идут в разные стороны.',rule:'Прямой угол — 90°, развёрнутый — 180°.',
+   d:function(){seq([P.wipe(),P.protr(CX,CY,RR),P.ring(CX,CY,RD),P.lab(CX,CY+80,'центр',RD,26),P.lab(110,CY+80,'нулевая линия',INK,26),P.lab(CX,64,'шкала от 0° до 180°',BL,26)])}},
+  {t:'Измеряем ∠AOB',talk:'Центр транспортира ставим в вершину <b>O</b>, нулевую линию — вдоль стороны <b>OB</b>. Сторона <b>OA</b> попадает на отметку 45°. Читаем ту шкалу, где ноль лежит на OB.',math:'∠AOB = <span class="circ">45°</span> — острый',d:meas(45,false,'AOB',['O','B','A'])},
+  {t:'Измеряем ∠CDE',talk:'Вершина <b>D</b> в центре, сторона <b>DE</b> на нуле. Сторона <b>DC</b> идёт строго вверх — ровно на 90°.',math:'∠CDE = <span class="circ">90°</span> — прямой',d:meas(90,false,'CDE',['D','E','C'])},
+  {t:'Измеряем ∠MNK',talk:'Вершина <b>N</b>, ноль на стороне <b>NK</b>. Угол раскрыт шире прямого, значит число больше 90: сторона <b>NM</b> показывает 120°.',math:'∠MNK = <span class="circ">120°</span> — тупой',rule:R_ACUTE,d:meas(120,false,'MNK',['N','K','M'])},
+  {t:'Измеряем ∠TRS',talk:'Здесь сторона <b>RS</b> смотрит влево, поэтому ноль берём слева — читаем вторую шкалу, которая тоже начинается с нуля слева. Сторона <b>RT</b> показывает 55°.',math:'∠TRS = <span class="circ">55°</span> — острый',d:meas(55,true,'TRS',['R','S','T'])},
+  {t:'Записи в тетрадь',talk:'Записываем результаты. Острые углы: <b>AOB</b> и <b>TRS</b>, прямой — <b>CDE</b>, тупой — <b>MNK</b>.',math:'∠AOB = 45° · ∠CDE = 90°<br>∠MNK = 120° · ∠TRS = 55°',answer:true}
+ ]},{
+ id:'t425',emoji:'✏️',short:'№ 425',sub:'строим углы',title:'№ 425 · Строим углы транспортиром',
+ condition:['С помощью транспортира постройте углы, равные: <b class="hl">90°; 50°; 30°; 60°; 100°; 95°; 105°; 45°; 135°; 15°</b>.'],vb:VB,g:[20,0,0],
+ steps:[
+  {t:'Читаем условие',talk:'Нужно построить десять углов: 90°, 50°, 30°, 60°, 100°, 95°, 105°, 45°, 135° и 15°. Строятся они одним способом — разберём его на двух примерах.',rule:'Углы измеряют и строят транспортиром в градусах (°).'},
+  {t:'Алгоритм построения',talk:'<b>1.</b> Проведи луч <b>OB</b>. <b>2.</b> Центр транспортира — в точку O, нулевая линия — по лучу. <b>3.</b> Найди на шкале нужное число (шкала, где ноль на луче) и поставь точку. <b>4.</b> Убери транспортир и проведи луч из O через точку.',rule:'Ноль транспортира должен лежать на стороне угла.',
+   d:function(){seq([P.wipe(),P.line(CX,CY,CX+235,CY,INK,4,450),P.letters([[CX,CY+46,'O'],[CX+235,CY+46,'B']],INK),P.protr(CX,CY,RR),P.ring(CX,CY,RD),P.lab(CX,CY+80,'центр',RD,26),P.ring(CX+RR,CY,RD),P.lab(CX+RR,CY+80,'ноль',RD,26)])}},
+  {t:'Строим угол 50°',talk:'Ставим транспортир, находим на шкале 50°, отмечаем точку, убираем транспортир и проводим луч <b>OA</b> из вершины через точку.',math:'∠AOB = <span class="circ">50°</span> — острый',d:build(50)},
+  {t:'Строим тупой угол 135°',talk:'Способ тот же. Угол тупой, число больше 90 — берём отметку 135° на шкале, где ноль лежит на нашем луче (а не 45° на другой!).',math:'∠AOB = <span class="circ">135°</span> — тупой',rule:R_ACUTE,d:build(135)},
+  {t:'Все десять углов',talk:'Остальные строим так же. <b>Острые</b>: 15°, 30°, 45°, 50°, 60°. <b>Прямой</b>: 90°. <b>Тупые</b>: 95°, 100°, 105°, 135°.',math:'острые: 15°, 30°, 45°, 50°, 60°<br>прямой: 90° · тупые: 95°, 100°, 105°, 135°',answer:true,
+   d:function(){seq([P.wipe()].concat(ANG.map(function(d,i){return P.mini(i,d)})))}}
  ]}];
 
 var CHALKS = {white:'#f7f4e9', yellow:'#ffe08a', pink:'#f9b8d0', blue:'#a9cdfb'};
