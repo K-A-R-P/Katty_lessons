@@ -31,7 +31,7 @@ body::before{content:"";position:fixed;left:30px;top:0;bottom:0;width:2px;backgr
 .vars{display:flex;gap:8px;margin:18px 0 0}
 .vars button{flex:1;font:800 16px 'Nunito';padding:11px;border-radius:12px;border:2px solid var(--grid);background:var(--soft);color:var(--mute);cursor:pointer}
 .vars button.on{background:linear-gradient(135deg,#5c6bc0,#7986cb);color:#fff;border-color:transparent}
-.stage{margin-top:18px;border-radius:16px;border:2px solid var(--cell);background-color:var(--sheet);background-image:linear-gradient(var(--cell) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--cell) 1.5px,transparent 1.5px);background-size:24px 24px;background-position:-1px -1px;padding:6px;position:relative}
+.stage{margin-top:18px;border-radius:16px;border:2px solid var(--cell);background:var(--sheet);overflow:hidden;position:relative}
 .stage svg{display:block;width:100%;height:auto;color:var(--ink);overflow:visible}
 .say{display:flex;gap:12px;align-items:flex-start;margin:16px 0 0;min-height:84px}
 .teach{font-size:40px;line-height:1;flex:none}
@@ -111,18 +111,18 @@ function circles(a){
   {t:a?'Обе окружности проходят через <b>C</b> — это их единственная <b>общая точка</b>. Каждая снаружи другой: <b>внешнее касание</b>.':'Обе окружности проходят через <b>B</b> — это их единственная <b>общая точка</b>. Малая лежит внутри большой: <b>внутреннее касание</b>.',
    f:function(){var x=a?350:430;seq([P.touch(x,210),a?P.lab(350,290,'общая точка C',GR):P.lab(452,206,'общая точка B',GR,24,'start')])}}
  ];
- return {vb:a?'90 0 520 420':'10 0 640 420',steps:s,ans:a?'Касаются <b>внешним</b> образом, общая точка — <b>C</b>':'Касаются <b>внутренним</b> образом, общая точка — <b>B</b>'};
+ return {g:[20,10,10],vb:a?'90 0 520 420':'10 0 640 420',steps:s,ans:a?'Касаются <b>внешним</b> образом, общая точка — <b>C</b>':'Касаются <b>внутренним</b> образом, общая точка — <b>B</b>'};
 }
 var TASKS=[
  {num:'№ 416',title:'Касание окружностей',cond:'Начертите отрезок <b>AB</b>, отметьте на нём точку <b>C</b>. Постройте две окружности, которые касаются друг друга: <b>а)</b> внешним образом, <b>б)</b> внутренним образом.',
   vars:[{n:'а) внешнее',d:circles(true)},{n:'б) внутреннее',d:circles(false)}]},
  {num:'№ 3.331',title:'Два друга навстречу друг другу',cond:'Расстояние между домами двух друзей — <b>1 км 800 м</b>. Они одновременно вышли навстречу друг другу. Один шёл со скоростью <b>84 м/мин</b>, другой — <b>на 12 м/мин быстрее</b>. Какое расстояние будет между друзьями через <b>6 минут</b> после выхода?',
-  vars:[{n:'',d:{vb:'0 0 700 320',ans:'Ответ: <span>720 м</span>',steps:[
-   {t:'Переведём расстояние в метры: <b>1 км 800 м = 1800 м</b>.',f:function(){seq([P.lab(30,126,'🏠',K,34),P.lab(670,126,'🏠',K,34),P.rect(60,90,580,48,GY,'1 км 800 м = 1800 м')])}},
+  vars:[{n:'',d:{g:[20,0,0],vb:'0 0 700 320',ans:'Ответ: <span>720 м</span>',steps:[
+   {t:'Переведём расстояние в метры: <b>1 км 800 м = 1800 м</b>.',f:function(){seq([P.lab(30,126,'🏠',K,34),P.lab(670,126,'🏠',K,34),P.rect(60,100,580,40,GY,'1 км 800 м = 1800 м')])}},
    {t:'Скорость второго друга: он идёт на 12 м/мин быстрее. <b>84 + 12 = 96 м/мин</b>.',f:function(){seq([P.line(70,175,210,175,BL,6,600),P.lab(140,215,'84 м/мин',BL),P.line(630,175,490,175,OR,6,600),P.lab(560,215,'96 м/мин',OR)])}},
    {t:'Идут навстречу — скорости складываются: <b>84 + 96 = 180 м/мин</b> (скорость сближения).',f:function(){seq([P.lab(350,160,'вместе: 84 + 96 = 180 м/мин',GR,24)])}},
-   {t:'За 6 минут вместе прошли: <b>180 × 6 = 1080 м</b>.',f:function(){seq([P.rect(60,240,348,48,BL,'180 × 6 = 1080 м')])}},
-   {t:'Осталось между ними: <b>1800 − 1080 = 720 м</b>.',f:function(){seq([P.line(408,138,408,240,GY,3,300),P.rect(408,240,232,48,GR,'1800 − 1080 = 720 м',22)])}}
+   {t:'За 6 минут вместе прошли: <b>180 × 6 = 1080 м</b>.',f:function(){seq([P.rect(60,240,340,40,BL,'180 × 6 = 1080 м')])}},
+   {t:'Осталось между ними: <b>1800 − 1080 = 720 м</b>.',f:function(){seq([P.line(400,140,400,240,GY,3,300),P.rect(400,240,240,40,GR,'1800 − 1080 = 720 м',22)])}}
   ]}}]}
 ];
 var $=function(i){return document.getElementById(i)};
@@ -134,7 +134,8 @@ function pickVar(j){stop();variant=task.vars[j].d;[].forEach.call($('vars').chil
  svg.setAttribute('viewBox',variant.vb);$('notes').innerHTML='';$('dots').innerHTML='';
  variant.steps.forEach(function(s,i){var li=document.createElement('li');li.innerHTML='<span class="n">'+(i+1)+'</span><div>'+s.t+'</div>';li.onclick=function(){stop();go(i+1)};$('notes').appendChild(li);$('dots').appendChild(document.createElement('i'))});
  $('ans').innerHTML='<span>✅</span><div>'+variant.ans+'</div>';go(1);auto()}
-function go(n){token++;svg.innerHTML='';cur=n;var st=variant.steps;fast=true;for(var i=0;i<n-1;i++)st[i].f();fast=false;st[n-1].f();
+function grid(){var v=svg.getAttribute('viewBox').split(' ').map(Number),g=variant.g,c=g[0],d='',x,y;for(x=v[0]+(((g[1]-v[0])%c)+c)%c;x<=v[0]+v[2];x+=c)d+='M'+x+' '+v[1]+'V'+(v[1]+v[3]);for(y=v[1]+(((g[2]-v[1])%c)+c)%c;y<=v[1]+v[3];y+=c)d+='M'+v[0]+' '+y+'H'+(v[0]+v[2]);var r=E('rect',{x:v[0],y:v[1],width:v[2],height:v[3]});r.style.fill='var(--sheet)';var p=E('path',{d:d,fill:'none','stroke-width':1.5,'vector-effect':'non-scaling-stroke'});p.style.stroke='var(--cell)'}
+function go(n){token++;svg.innerHTML='';grid();cur=n;var st=variant.steps;fast=true;for(var i=0;i<n-1;i++)st[i].f();fast=false;st[n-1].f();
  $('say').innerHTML=st[n-1].t;
  [].forEach.call($('notes').children,function(li,i){li.className=i<n-1?'done':i==n-1?'now':''});
  [].forEach.call($('dots').children,function(d,i){d.className=i<n?'on':''});
