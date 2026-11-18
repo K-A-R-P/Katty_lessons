@@ -1,397 +1,149 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задача 416 — Касание окружностей</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 30px;
-        }
-        .task-card {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-            max-width: 750px;
-            width: 100%;
-            overflow: hidden;
-        }
-        .task-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            padding: 25px 35px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .task-number {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 10px 18px;
-            font-size: 28px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-        .task-title { font-size: 20px; font-weight: 600; color: #ffffff; }
-        .task-body { padding: 35px; }
-        .section { margin-bottom: 25px; }
-        .section-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            padding: 8px 16px;
-            border-radius: 8px;
-        }
-        .section-label.condition { background: #fff3e0; color: #e65100; }
-        .section-label.solution { background: #e8f5e9; color: #2e7d32; }
-        .condition-text {
-            font-size: 17px;
-            line-height: 1.8;
-            color: #424242;
-            background: #fafafa;
-            border-left: 4px solid #ff9800;
-            padding: 18px 22px;
-            border-radius: 0 12px 12px 0;
-        }
-        .condition-text strong { color: #d84315; }
-        .variant-tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #e0e0e0;
-        }
-        .variant-tab {
-            flex: 1;
-            padding: 14px 20px;
-            font-size: 16px;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #f5f5f5;
-            color: #888;
-            border: none;
-            outline: none;
-        }
-        .variant-tab.active {
-            background: linear-gradient(135deg, #5c6bc0, #7986cb);
-            color: white;
-        }
-        .variant-tab:first-child { border-right: 2px solid #e0e0e0; }
-        .variant-tab.active:first-child { border-right-color: #7986cb; }
-        .variant-content { display: none; }
-        .variant-content.active { display: block; }
-        .svg-container {
-            background: #f8f9ff;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .svg-container svg { max-width: 100%; height: auto; }
-
-        /* Анимации построения */
-        .draw-line {
-            stroke-dasharray: 300;
-            stroke-dashoffset: 300;
-            animation: drawLine 1s ease forwards;
-        }
-        .draw-circle-lg {
-            stroke-dasharray: 1300;
-            stroke-dashoffset: 1300;
-            animation: drawCircle 2.5s ease forwards;
-        }
-        .draw-circle-sm {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 800;
-            animation: drawCircle 2s ease forwards;
-        }
-        .fade-in { opacity: 0; animation: fadeIn 0.5s ease forwards; }
-        .point-marker { opacity: 0; animation: fadeIn 0.3s ease forwards; }
-
-        @keyframes drawLine { to { stroke-dashoffset: 0; } }
-        @keyframes drawCircle { to { stroke-dashoffset: 0; } }
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        .btn-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
-        .btn {
-            padding: 12px 28px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-replay {
-            background: linear-gradient(135deg, #ffa726, #ffb74d);
-            color: white;
-        }
-        .btn-replay:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4); }
-        .solution-steps { list-style: none; }
-        .solution-step {
-            margin-bottom: 16px;
-            padding: 14px 20px;
-            background: #f9fbe7;
-            border-radius: 12px;
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: all 0.5s ease;
-        }
-        .solution-step.visible { opacity: 1; transform: translateX(0); }
-        .step-number {
-            background: linear-gradient(135deg, #43a047, #66bb6a);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 15px;
-            margin-right: 12px;
-        }
-        .step-text { font-size: 17px; line-height: 1.7; color: #333; }
-        .step-text strong { color: #1a237e; }
-        .explain-box {
-            background: linear-gradient(135deg, #fff8e1, #ffecb3);
-            border: 2px solid #ffc107;
-            border-radius: 14px;
-            padding: 20px 25px;
-            margin-bottom: 25px;
-            font-size: 16px;
-            line-height: 1.7;
-            color: #555;
-        }
-        .explain-box strong { color: #e65100; }
-        .footer {
-            text-align: center;
-            padding: 15px;
-            background: #f5f5f5;
-            font-size: 13px;
-            color: #999;
-        }
-        @media (max-width: 600px) {
-            body { padding: 15px; }
-            .task-body { padding: 20px 16px; }
-            .task-header { padding: 18px 20px; }
-            .task-number { font-size: 22px; padding: 8px 14px; }
-            .task-title { font-size: 16px; }
-            .section-label { font-size: 13px; padding: 6px 12px; }
-            .condition-text { font-size: 15px; padding: 14px 16px; }
-            .step-text { font-size: 15px; }
-            .step-number { width: 26px; height: 26px; font-size: 13px; }
-            .btn { padding: 10px 20px; font-size: 14px; }
-            .variant-tab { padding: 12px 14px; font-size: 14px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Урок математики — объясняем задачи</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--cell:#9cc8f2;--sheet:#fdfeff;--paper:#fffdf6;--ink:#2b2d42;--mute:#6b7280;--grid:#d6e6f5;--margin:#f2a0a0;--board:#2f5d50;--frame:#a47c4f;--card:#ffffff;--soft:#f3f6ff;--blue:#3b82f6;--orange:#f59e0b;--green:#22a06b;--red:#e5484d;--yellow:#fff1a8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--cell:#3b5a8a;--sheet:#1b2231;--paper:#1d2230;--ink:#eef0f6;--mute:#9aa3b5;--grid:#2a3550;--margin:#7a3f46;--board:#1f4338;--frame:#6d5233;--card:#262c3d;--soft:#2c3449;--yellow:#4a4320}}
+:root[data-theme="dark"]{color-scheme:dark;--cell:#3b5a8a;--sheet:#1b2231;--paper:#1d2230;--ink:#eef0f6;--mute:#9aa3b5;--grid:#2a3550;--margin:#7a3f46;--board:#1f4338;--frame:#6d5233;--card:#262c3d;--soft:#2c3449;--yellow:#4a4320}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'Nunito','Segoe UI',Tahoma,sans-serif;color:var(--ink);background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px;min-height:100vh;padding:18px 14px 30px;position:relative}
+body::before{content:"";position:fixed;left:30px;top:0;bottom:0;width:2px;background:var(--margin);opacity:.7;pointer-events:none}
+.wrap{max-width:780px;margin:0 auto;position:relative}
+.board{background:var(--board);border:9px solid var(--frame);border-radius:16px;padding:16px 22px 18px;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.18),inset 0 0 40px rgba(0,0,0,.25);text-align:center}
+.board small{font-family:'Caveat',cursive;font-size:22px;opacity:.85;letter-spacing:1px}
+.board h1{font-family:'Caveat','Segoe Script',cursive;font-size:38px;line-height:1.1;font-weight:700;text-shadow:0 0 6px rgba(255,255,255,.35)}
+.chalk{height:6px;width:70px;margin:8px auto 0;background:#fff;opacity:.6;border-radius:4px}
+.tasks{display:flex;gap:8px;margin:16px 4px 0;flex-wrap:wrap}
+.tasks button{font:800 16px 'Nunito',sans-serif;border:0;padding:10px 16px;border-radius:12px 12px 0 0;background:var(--yellow);color:var(--ink);cursor:pointer;box-shadow:0 -2px 0 rgba(0,0,0,.08) inset;opacity:.75;transition:.2s}
+.tasks button.on{opacity:1;background:var(--blue);color:#fff;transform:translateY(-3px)}
+.card{background:var(--card);border-radius:0 18px 18px 18px;box-shadow:0 14px 36px rgba(30,40,90,.18);padding:22px;margin-top:0;border:2px solid rgba(0,0,0,.05)}
+.tag{display:inline-block;font:700 14px 'Nunito';letter-spacing:1.2px;text-transform:uppercase;padding:6px 12px;border-radius:8px;margin-bottom:10px}
+.tag.c{background:#fff0d9;color:#c2570c}.tag.s{background:#e3f6ea;color:#1b7a4b}
+@media (prefers-color-scheme:dark){.tag.c{background:#4a3520;color:#ffc27a}.tag.s{background:#1f3b2d;color:#8fe0b4}}
+.cond{font-size:18px;line-height:1.75;background:var(--soft);border-left:5px solid var(--orange);border-radius:0 14px 14px 0;padding:14px 18px}
+.cond b{color:var(--red)}
+.vars{display:flex;gap:8px;margin:18px 0 0}
+.vars button{flex:1;font:800 16px 'Nunito';padding:11px;border-radius:12px;border:2px solid var(--grid);background:var(--soft);color:var(--mute);cursor:pointer}
+.vars button.on{background:linear-gradient(135deg,#5c6bc0,#7986cb);color:#fff;border-color:transparent}
+.stage{margin-top:18px;border-radius:16px;border:2px solid var(--cell);background-color:var(--sheet);background-image:linear-gradient(var(--cell) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--cell) 1.5px,transparent 1.5px);background-size:24px 24px;background-position:-1px -1px;padding:6px;position:relative}
+.stage svg{display:block;width:100%;height:auto;color:var(--ink);overflow:visible}
+.say{display:flex;gap:12px;align-items:flex-start;margin:16px 0 0;min-height:84px}
+.teach{font-size:40px;line-height:1;flex:none}
+.bubble{position:relative;background:var(--yellow);border-radius:16px;padding:12px 16px;font-size:18px;line-height:1.55;flex:1;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.bubble::before{content:"";position:absolute;left:-9px;top:18px;border:9px solid transparent;border-left:0;border-right-color:var(--yellow)}
+.bubble b{color:var(--blue)}
+.ctrl{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{font:800 16px 'Nunito';border:0;border-radius:12px;padding:12px 18px;cursor:pointer;color:#fff;transition:transform .15s,opacity .2s;touch-action:manipulation}
+.btn:active{transform:scale(.96)}.btn:disabled{opacity:.35;cursor:default}
+.next{background:linear-gradient(135deg,#22a06b,#4cc38a);flex:2;font-size:18px}
+.back{background:#7986cb}.auto{background:linear-gradient(135deg,#ffa726,#ffb74d)}.rep{background:#90a4ae}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--grid);transition:.3s}.dots i.on{background:var(--green);transform:scale(1.3)}
+.notes{list-style:none;margin-top:6px}
+.notes li{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;margin-top:10px;border-radius:12px;background:var(--soft);font-size:17px;line-height:1.55;cursor:pointer;opacity:.28;transition:.4s}
+.notes li.done{opacity:1}.notes li.now{opacity:1;box-shadow:0 0 0 3px var(--green) inset;transform:translateX(4px)}
+.notes b{color:var(--blue)}
+.n{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#43a047,#66bb6a);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;margin-top:1px}
+.ans{margin-top:20px;display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#e3f2fd,#bbdefb);color:#0d47a1;border-radius:16px;padding:16px 20px;font-weight:800;font-size:19px;transition:.5s;opacity:.18;transform:scale(.97)}
+@media (prefers-color-scheme:dark){.ans{background:linear-gradient(135deg,#1c3558,#234a7a);color:#cfe4ff}}
+.ans.show{opacity:1;transform:none}.ans span{font-size:34px}
+.foot{text-align:center;color:var(--mute);font-size:14px;margin-top:18px}
+@media (max-width:600px){body{padding:12px 8px 24px}body::before{left:12px}.board{padding:12px;border-width:7px}.board h1{font-size:30px}.card{padding:14px}.cond{font-size:16px;padding:12px 14px}.bubble{font-size:16px}.teach{font-size:30px}.notes li{font-size:15px}.btn{padding:12px 12px;font-size:15px}.next{flex-basis:100%;order:-1}.back,.auto,.rep{flex:1}.ans{font-size:16px}.ans span{font-size:28px}}
+</style>
 </head>
 <body>
-    <div class="task-card">
-        <div class="task-header">
-            <div class="task-number">№ 416</div>
-            <div class="task-title">Касание окружностей</div>
-        </div>
-        <div class="task-body">
-            <div class="section">
-                <div class="section-label condition">Условие</div>
-                <div class="condition-text">
-                    На отрезке AB отметьте точку C.<br><br>
-                    <strong>а)</strong> Постройте две окружности: с центром A и радиусом AC,
-                    и с центром B и радиусом CB. Построенные окружности имеют только одну
-                    общую точку C. Говорят, что они <strong>касаются внешним образом</strong>.<br><br>
-                    <strong>б)</strong> Постройте две окружности: с центром A и радиусом AB,
-                    и с центром C и радиусом CB. Построенные окружности имеют только одну
-                    общую точку B. Говорят, что они <strong>касаются внутренним образом</strong>.
-                </div>
-            </div>
-
-            <div class="explain-box">
-                Окружности могут касаться двумя способами — <strong>внешним</strong>
-                (одна снаружи другой) и <strong>внутренним</strong> (одна внутри другой).
-            </div>
-
-            <div class="variant-tabs">
-                <button class="variant-tab active" onclick="switchVariant(0)">а) Внешнее касание</button>
-                <button class="variant-tab" onclick="switchVariant(1)">б) Внутреннее касание</button>
-            </div>
-
-            <!-- ВАРИАНТ А: Внешнее касание -->
-            <div class="variant-content active" id="variant-0">
-                <div class="svg-container">
-                    <svg id="svg-a" width="700" height="420" viewBox="0 0 700 420">
-                        <!-- Отрезок AB -->
-                        <line x1="230" y1="210" x2="470" y2="210" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay:0.3s"/>
-                        <!-- Точки -->
-                        <circle cx="230" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.5s"/>
-                        <circle cx="350" cy="210" r="5" fill="#ff6f00" class="point-marker" style="animation-delay:0.7s"/>
-                        <circle cx="470" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.6s"/>
-                        <!-- Подписи точек -->
-                        <text x="230" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.8s">A</text>
-                        <text x="350" y="245" font-size="18" font-weight="bold" fill="#ff6f00" class="fade-in" style="animation-delay:1s">C</text>
-                        <text x="470" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.9s">B</text>
-                        <!-- Окружность с центром A, радиус AC=120 -->
-                        <circle cx="230" cy="210" r="120" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.2s"/>
-                        <!-- Окружность с центром B, радиус CB=120 -->
-                        <circle cx="470" cy="210" r="120" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.8s"/>
-                        <!-- Точка касания C -->
-                        <circle cx="350" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
-                        <circle cx="350" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
-                        <!-- Маркеры-стрелки -->
-                        <defs>
-                            <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="#42a5f5"/>
-                            </marker>
-                            <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="#ffa726"/>
-                            </marker>
-                        </defs>
-                        <!-- Стрелка радиуса AC — вверх из центра A -->
-                        <line x1="230" y1="210" x2="230" y2="90" stroke="#42a5f5" stroke-width="2" marker-end="url(#arrow-blue)" class="fade-in" style="animation-delay:1.5s"/>
-                        <!-- Подпись радиуса AC — справа от стрелки -->
-                        <text x="238" y="148" font-size="13" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">радиус AC</text>
-
-                        <!-- Стрелка радиуса CB — вверх из центра B -->
-                        <line x1="470" y1="210" x2="470" y2="90" stroke="#ffa726" stroke-width="2" marker-end="url(#arrow-orange)" class="fade-in" style="animation-delay:2.2s"/>
-                        <!-- Подпись радиуса CB — слева от стрелки -->
-                        <text x="390" y="148" font-size="13" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">радиус CB</text>
-                        <!-- Результат -->
-                        <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внешним образом</text>
-                        <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только C</text>
-                    </svg>
-                </div>
-                <div class="btn-container">
-                    <button class="btn btn-replay" onclick="replay('a')">🔁 Повторить построение</button>
-                </div>
-            </div>
-
-            <!-- ВАРИАНТ Б: Внутреннее касание -->
-            <div class="variant-content" id="variant-1">
-                <div class="svg-container">
-                    <svg id="svg-b" width="700" height="420" viewBox="0 0 700 420">
-                        <!-- Отрезок AB -->
-                        <line x1="230" y1="210" x2="430" y2="210" stroke="#555" stroke-width="3" class="draw-line" style="animation-delay:0.3s"/>
-                        <!-- Точки -->
-                        <circle cx="230" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.5s"/>
-                        <circle cx="310" cy="210" r="5" fill="#ff6f00" class="point-marker" style="animation-delay:0.7s"/>
-                        <circle cx="430" cy="210" r="5" fill="#333" class="point-marker" style="animation-delay:0.6s"/>
-                        <!-- Подписи точек -->
-                        <text x="230" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.8s">A</text>
-                        <text x="310" y="245" font-size="18" font-weight="bold" fill="#ff6f00" class="fade-in" style="animation-delay:1s">C</text>
-                        <text x="430" y="245" font-size="18" font-weight="bold" fill="#333" class="fade-in" style="animation-delay:0.9s">B</text>
-                        <!-- Большая окружность — центр A, радиус AB=200 -->
-                        <circle cx="230" cy="210" r="200" fill="none" stroke="#42a5f5" stroke-width="3" class="draw-circle-lg" style="animation-delay:1.2s"/>
-                        <!-- Малая окружность — центр C, радиус CB=120 -->
-                        <circle cx="310" cy="210" r="120" fill="none" stroke="#ffa726" stroke-width="3" class="draw-circle-sm" style="animation-delay:1.8s"/>
-                        <!-- Точка касания B -->
-                        <circle cx="430" cy="210" r="14" fill="#4caf50" class="point-marker" style="animation-delay:2.5s"/>
-                        <circle cx="430" cy="210" r="7" fill="white" class="point-marker" style="animation-delay:2.5s"/>
-                        <!-- Стрелка радиуса AB — вверх из центра A (r=200) -->
-                        <line x1="230" y1="210" x2="230" y2="5" stroke="#42a5f5" stroke-width="2" marker-end="url(#arrow-blue-b)" class="fade-in" style="animation-delay:1.5s"/>
-                        <!-- Подпись радиуса AB — справа от стрелки -->
-                        <text x="238" y="100" font-size="13" fill="#42a5f5" font-weight="600" class="fade-in" style="animation-delay:1.5s">радиус AB</text>
-
-                        <!-- Стрелка радиуса CB — вниз из центра C (r=120) -->
-                        <line x1="310" y1="210" x2="310" y2="335" stroke="#ffa726" stroke-width="2" marker-end="url(#arrow-orange-b)" class="fade-in" style="animation-delay:2.2s"/>
-                        <!-- Подпись радиуса CB — справа от стрелки -->
-                        <text x="318" y="275" font-size="13" fill="#ffa726" font-weight="600" class="fade-in" style="animation-delay:2.2s">радиус CB</text>
-                        <!-- Результат -->
-                        <text x="350" y="360" font-size="17" fill="#1a237e" font-weight="bold" text-anchor="middle" class="fade-in" style="animation-delay:2.8s">Окружности касаются внутренним образом</text>
-                        <text x="350" y="385" font-size="14" fill="#555" text-anchor="middle" class="fade-in" style="animation-delay:3s">Общая точка — только B. Малая окружность внутри большой.</text>
-                    </svg>
-                </div>
-                <div class="btn-container">
-                    <button class="btn btn-replay" onclick="replay('b')">🔁 Повторить построение</button>
-                </div>
-            </div>
-
-            <!-- Решение для варианта А -->
-            <div id="solution-a" class="section">
-                <div class="section-label solution">Решение — вариант а)</div>
-                <ol class="solution-steps">
-                    <li class="solution-step"><span class="step-number">1</span><div class="step-text">Берём отрезок AB и отмечаем на нём точку C</div></li>
-                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим окружность с центром в точке A и <strong>радиусом AC</strong> — расстояние от A до C</div></li>
-                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим окружность с центром в точке B и <strong>радиусом CB</strong> — расстояние от C до B</div></li>
-                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через точку C — это их <strong>общая точка</strong></div></li>
-                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Так как каждая окружность снаружи другой и они касаются в точке C — это <strong>внешнее касание</strong></div></li>
-                </ol>
-            </div>
-
-            <!-- Решение для варианта Б -->
-            <div id="solution-b" class="section" style="display:none">
-                <div class="section-label solution">Решение — вариант б)</div>
-                <ol class="solution-steps">
-                    <li class="solution-step"><span class="step-number">1</span><div class="step-text">Берём отрезок AB и отмечаем на нём точку C</div></li>
-                    <li class="solution-step"><span class="step-number">2</span><div class="step-text">Строим окружность с центром в точке A и <strong>радиусом AB</strong> — расстояние от A до самого конца отрезка</div></li>
-                    <li class="solution-step"><span class="step-number">3</span><div class="step-text">Строим окружность с центром в точке C и <strong>радиусом CB</strong> — расстояние от C до B</div></li>
-                    <li class="solution-step"><span class="step-number">4</span><div class="step-text">Обе окружности проходят через точку B — это их <strong>общая точка</strong></div></li>
-                    <li class="solution-step"><span class="step-number">5</span><div class="step-text">Малая окружность (центр C) лежит внутри большой (центр A), и они касаются в точке B — это <strong>внутреннее касание</strong></div></li>
-                </ol>
-            </div>
-        </div>
-        <div class="footer">Математика · 5 класс · Для доченьки Кати</div>
+<div class="wrap">
+  <header class="board"><small>Урок математики · 5 класс</small><h1 id="ttl"></h1><div class="chalk"></div></header>
+  <nav class="tasks" id="tasks"></nav>
+  <main class="card">
+    <div class="tag c">📋 Условие</div>
+    <div class="cond" id="cond"></div>
+    <div class="vars" id="vars"></div>
+    <div class="stage"><svg id="svg" aria-label="Чертёж к задаче"></svg></div>
+    <div class="say"><div class="teach">👩‍🏫</div><div class="bubble" id="say"></div></div>
+    <div class="ctrl">
+      <button class="btn next" id="bn">Дальше ▶</button>
+      <button class="btn back" id="bb">◀ Назад</button>
+      <button class="btn auto" id="ba">⏯ Авто</button>
+      <button class="btn rep" id="br">🔁</button>
     </div>
-
-    <script>
-        function switchVariant(index) {
-            document.querySelectorAll('.variant-tab').forEach((t, i) => {
-                t.classList.toggle('active', i === index);
-            });
-            document.querySelectorAll('.variant-content').forEach((c, i) => {
-                c.classList.toggle('active', i === index);
-            });
-            // Показываем нужное решение
-            document.getElementById('solution-a').style.display = index === 0 ? '' : 'none';
-            document.getElementById('solution-b').style.display = index === 1 ? '' : 'none';
-            if (index === 0) {
-                setTimeout(() => replay('a'), 100);
-            } else {
-                setTimeout(() => replay('b'), 100);
-            }
-            animateSteps();
-        }
-
-        function replay(variant) {
-            var svg = document.getElementById('svg-' + variant);
-            if (!svg) return;
-            var parent = svg.parentNode;
-            var clone = svg.cloneNode(true);
-            parent.replaceChild(clone, svg);
-        }
-
-        function animateSteps() {
-            var steps = document.querySelectorAll('.solution-step');
-            steps.forEach(function(step, i) {
-                step.classList.remove('visible');
-                setTimeout(function() { step.classList.add('visible'); }, 1800 + i * 500);
-            });
-        }
-
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                replay('a');
-                animateSteps();
-            }, 300);
-        });
-    </script>
+    <div class="dots" id="dots"></div>
+    <div class="tag s" style="margin-top:20px">✏️ Конспект</div>
+    <ol class="notes" id="notes"></ol>
+    <div class="ans" id="ans"></div>
+  </main>
+  <div class="foot">Математика · 5 класс · Для доченьки Кати</div>
+</div>
+<script>
+var NS='http://www.w3.org/2000/svg',svg=document.getElementById('svg'),token=0,fast=false,cur=0,task,variant,timer=null;
+var K='currentColor',BL='#3b82f6',OR='#f59e0b',GR='#22a06b',GY='#78909c';
+function E(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e}
+function run(d,f,done){d=fast?0:d;var my=token;if(!d){f(1);done&&done();return}var s=performance.now();(function g(n){if(my!==token)return;var t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(g):done&&done()})(s)}
+function seq(a){var my=token;(function n(i){if(i>=a.length||my!==token)return;run(a[i][0],a[i][1],function(){n(i+1)})})(0)}
+var P={
+ line:function(x1,y1,x2,y2,c,w,d){var e;return[d||500,function(t){e=e||E('line',{x1:x1,y1:y1,x2:x1,y2:y1,stroke:c,'stroke-width':w||3,'stroke-linecap':'round'});e.setAttribute('x2',x1+(x2-x1)*t);e.setAttribute('y2',y1+(y2-y1)*t)}]},
+ dot:function(x,y,c,txt){var e,l;return[450,function(t){if(!e){e=E('circle',{cx:x,cy:y,r:0,fill:c});l=E('text',{x:x,y:y+34,'text-anchor':'middle','font-size':26,'font-weight':800,fill:c,'font-family':'Nunito,sans-serif',opacity:0});l.textContent=txt}e.setAttribute('r',7*t);l.setAttribute('opacity',t)}]},
+ lab:function(x,y,txt,c,sz,anc,tmp){var e;return[350,function(t){if(!e){e=E('text',{x:x,y:y,'text-anchor':anc||'middle','font-size':sz||22,'font-weight':800,fill:c,'font-family':'Nunito,sans-serif',opacity:0,'class':tmp?'tmp':''});e.textContent=txt}e.setAttribute('opacity',t)}]},
+ ring:function(x,y,c){var e;return[800,function(t){e=e||E('circle',{cx:x,cy:y,r:8,fill:'none',stroke:c,'stroke-width':4,'class':'tmp'});e.setAttribute('r',8+10*Math.sin(t*Math.PI)+16*t);e.setAttribute('opacity',t<1?1-t*.3:0.9)}]},
+ compass:function(cx,cy,r,c,a0){var e,l,p,L=2*Math.PI*r;return[2400,function(t){if(!e){e=E('circle',{cx:cx,cy:cy,r:r,fill:'none',stroke:c,'stroke-width':3.5,'stroke-dasharray':L,transform:'rotate('+a0*180/Math.PI+' '+cx+' '+cy+')'});l=E('line',{x1:cx,y1:cy,stroke:c,'stroke-width':2,'stroke-dasharray':'6 5'});p=E('circle',{r:6,fill:c})}
+  e.setAttribute('stroke-dashoffset',L*(1-t));var th=a0+t*2*Math.PI,x=cx+r*Math.cos(th),y=cy+r*Math.sin(th);l.setAttribute('x2',x);l.setAttribute('y2',y);p.setAttribute('cx',x);p.setAttribute('cy',y);var v=t<1?1:0;l.setAttribute('opacity',v);p.setAttribute('opacity',v)}]},
+ touch:function(x,y){var a,b;return[500,function(t){if(!a){a=E('circle',{cx:x,cy:y,r:0,fill:GR});b=E('circle',{cx:x,cy:y,r:0,fill:'#fff'})}a.setAttribute('r',15*t);b.setAttribute('r',7*t)}]},
+ arrow:function(x1,y1,x2,y2,c){var e,h;return[600,function(t){if(!e){e=E('line',{x1:x1,y1:y1,x2:x1,y2:y1,stroke:c,'stroke-width':4,'stroke-linecap':'round'});h=E('polygon',{fill:c})}var x=x1+(x2-x1)*t,y=y1+(y2-y1)*t,a=Math.atan2(y2-y1,x2-x1),s=17;e.setAttribute('x2',x);e.setAttribute('y2',y);h.setAttribute('points',x+','+y+' '+(x-s*Math.cos(a-.45))+','+(y-s*Math.sin(a-.45))+' '+(x-s*Math.cos(a+.45))+','+(y-s*Math.sin(a+.45)))}]},
+ clear:function(){var L;return[450,function(t){L=L||[].slice.call(svg.querySelectorAll('.tmp'));L.forEach(function(e){e.style.opacity=1-t;if(t>=1)e.remove()})}]},
+ rect:function(x,y,w,h,c,txt,sz){var r,l;return[900,function(t){if(!r){r=E('rect',{x:x,y:y,width:0,height:h,rx:10,fill:c});l=E('text',{x:x+w/2,y:y+h/2+8,'text-anchor':'middle','font-size':sz||24,'font-weight':800,fill:'#fff','font-family':'Nunito,sans-serif',opacity:0});l.textContent=txt}r.setAttribute('width',w*t);l.setAttribute('opacity',t>.6?(t-.6)/.4:0)}]}
+};
+function circles(a){
+ var A=[230,210],B=a?[470,210]:[430,210],C=a?[350,210]:[310,210],R=a?[350,210]:[430,210];
+ var s=[
+  {t:'Берём отрезок <b>AB</b> и отмечаем на нём точку <b>C</b>.',f:function(){seq([P.line(A[0],210,B[0],210,GY,4,700),P.dot(A[0],210,K,'A'),P.dot(C[0],210,OR,'C'),P.dot(B[0],210,K,'B')])}},
+  {t:a?'Первая окружность: <b>центр — A</b>, а <b>точка радиуса — C</b>. Расстояние AC — это радиус.':'Первая окружность: <b>центр — A</b>, а <b>точка радиуса — B</b>. Расстояние AB — это радиус.',
+   f:function(){seq([P.ring(A[0],210,BL),P.lab(A[0],290,'центр',BL,22,'middle',1),P.ring(R[0],210,BL),P.lab(R[0],290,'точка радиуса',BL,22,'middle',1),P.clear()])}},
+  {t:'Ставим «ножку циркуля» в центр и проводим <b>окружность</b> через точку радиуса.',f:function(){seq([P.compass(230,210,a?120:200,BL,0)])}},
+  {t:a?'Вторая окружность: <b>центр — B</b>, радиус <b>CB</b> — от B до C.':'Вторая окружность: <b>центр — C</b>, радиус <b>CB</b> — от C до B.',
+   f:function(){var x=a?470:310,q=a?350:430;seq([P.ring(x,210,OR),P.lab(x,290,'центр',OR,22,'middle',1),P.ring(q,210,OR),P.lab(q,290,'точка радиуса',OR,22,'middle',1),P.clear()])}},
+  {t:'Проводим вторую окружность.',f:function(){seq([a?P.compass(470,210,120,OR,Math.PI):P.compass(310,210,120,OR,0)])}},
+  {t:a?'Обе окружности проходят через <b>C</b> — это их единственная <b>общая точка</b>. Каждая снаружи другой: <b>внешнее касание</b>.':'Обе окружности проходят через <b>B</b> — это их единственная <b>общая точка</b>. Малая лежит внутри большой: <b>внутреннее касание</b>.',
+   f:function(){var x=a?350:430;seq([P.touch(x,210),a?P.lab(350,290,'общая точка C',GR):P.lab(452,206,'общая точка B',GR,24,'start')])}}
+ ];
+ return {vb:a?'90 0 520 420':'10 0 640 420',steps:s,ans:a?'Касаются <b>внешним</b> образом, общая точка — <b>C</b>':'Касаются <b>внутренним</b> образом, общая точка — <b>B</b>'};
+}
+var TASKS=[
+ {num:'№ 416',title:'Касание окружностей',cond:'Начертите отрезок <b>AB</b>, отметьте на нём точку <b>C</b>. Постройте две окружности, которые касаются друг друга: <b>а)</b> внешним образом, <b>б)</b> внутренним образом.',
+  vars:[{n:'а) внешнее',d:circles(true)},{n:'б) внутреннее',d:circles(false)}]},
+ {num:'№ 3.331',title:'Два друга навстречу друг другу',cond:'Расстояние между домами двух друзей — <b>1 км 800 м</b>. Они одновременно вышли навстречу друг другу. Один шёл со скоростью <b>84 м/мин</b>, другой — <b>на 12 м/мин быстрее</b>. Какое расстояние будет между друзьями через <b>6 минут</b> после выхода?',
+  vars:[{n:'',d:{vb:'0 0 700 320',ans:'Ответ: <span>720 м</span>',steps:[
+   {t:'Переведём расстояние в метры: <b>1 км 800 м = 1800 м</b>.',f:function(){seq([P.lab(30,126,'🏠',K,34),P.lab(670,126,'🏠',K,34),P.rect(60,90,580,48,GY,'1 км 800 м = 1800 м')])}},
+   {t:'Скорость второго друга: он идёт на 12 м/мин быстрее. <b>84 + 12 = 96 м/мин</b>.',f:function(){seq([P.line(70,175,210,175,BL,6,600),P.lab(140,215,'84 м/мин',BL),P.line(630,175,490,175,OR,6,600),P.lab(560,215,'96 м/мин',OR)])}},
+   {t:'Идут навстречу — скорости складываются: <b>84 + 96 = 180 м/мин</b> (скорость сближения).',f:function(){seq([P.lab(350,160,'вместе: 84 + 96 = 180 м/мин',GR,24)])}},
+   {t:'За 6 минут вместе прошли: <b>180 × 6 = 1080 м</b>.',f:function(){seq([P.rect(60,240,348,48,BL,'180 × 6 = 1080 м')])}},
+   {t:'Осталось между ними: <b>1800 − 1080 = 720 м</b>.',f:function(){seq([P.line(408,138,408,240,GY,3,300),P.rect(408,240,232,48,GR,'1800 − 1080 = 720 м',22)])}}
+  ]}}]}
+];
+var $=function(i){return document.getElementById(i)};
+function pickTask(i){task=TASKS[i];$('ttl').textContent=task.num+' · '+task.title;$('cond').innerHTML=task.cond;
+ [].forEach.call($('tasks').children,function(b,j){b.classList.toggle('on',j==i)});
+ $('vars').style.display=task.vars.length>1?'flex':'none';$('vars').innerHTML='';
+ task.vars.forEach(function(v,j){var b=document.createElement('button');b.textContent=v.n;b.onclick=function(){pickVar(j)};$('vars').appendChild(b)});pickVar(0)}
+function pickVar(j){stop();variant=task.vars[j].d;[].forEach.call($('vars').children,function(b,k){b.classList.toggle('on',k==j)});
+ svg.setAttribute('viewBox',variant.vb);$('notes').innerHTML='';$('dots').innerHTML='';
+ variant.steps.forEach(function(s,i){var li=document.createElement('li');li.innerHTML='<span class="n">'+(i+1)+'</span><div>'+s.t+'</div>';li.onclick=function(){stop();go(i+1)};$('notes').appendChild(li);$('dots').appendChild(document.createElement('i'))});
+ $('ans').innerHTML='<span>✅</span><div>'+variant.ans+'</div>';go(1);auto()}
+function go(n){token++;svg.innerHTML='';cur=n;var st=variant.steps;fast=true;for(var i=0;i<n-1;i++)st[i].f();fast=false;st[n-1].f();
+ $('say').innerHTML=st[n-1].t;
+ [].forEach.call($('notes').children,function(li,i){li.className=i<n-1?'done':i==n-1?'now':''});
+ [].forEach.call($('dots').children,function(d,i){d.className=i<n?'on':''});
+ $('ans').classList.toggle('show',n==st.length);$('bb').disabled=n<=1;$('bn').disabled=n>=st.length;$('bn').textContent=n>=st.length?'Готово ✔':'Дальше ▶'}
+function stop(){clearTimeout(timer);timer=null;$('ba').textContent='⏯ Авто'}
+function auto(){if(timer){stop();return}$('ba').textContent='⏸ Пауза';if(cur>=variant.steps.length)go(1);(function tick(){timer=setTimeout(function(){if(cur<variant.steps.length){go(cur+1);tick()}else stop()},4200)})()}
+$('bn').onclick=function(){stop();go(cur+1)};$('bb').onclick=function(){stop();go(cur-1)};$('br').onclick=function(){stop();go(1)};$('ba').onclick=auto;
+TASKS.forEach(function(t,i){var b=document.createElement('button');b.textContent=t.num;b.onclick=function(){pickTask(i)};$('tasks').appendChild(b)});
+pickTask(0);
+</script>
 </body>
 </html>
