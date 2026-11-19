@@ -401,6 +401,12 @@ body::before{
  .wrap{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
  .toasts{top:12px}
 }
+.fig{cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.fig:hover{transform:translateY(-2px);border-color:var(--blue);box-shadow:0 8px 0 rgba(90,70,30,.14)}
+.fig:active{transform:translateY(1px)}
+.fig .replay{position:absolute;right:8px;bottom:8px;padding:4px 10px;border-radius:999px;font-weight:800;font-size:12px;
+  background:rgba(255,253,244,.92);border:1.5px solid #c9bd9e;color:var(--ink-deep);pointer-events:none;transition:opacity .2s}
+.fig.playing .replay{opacity:0}
 </style>
 </head>
 <body>
@@ -793,25 +799,38 @@ function renderTabs(){
       +'<span class="tab-emoji">'+p.emoji+'</span><span class="tab-txt"><b>'+p.short+'</b><small>'+p.sub+'</small></span></button>';
   }).join('');
 }
-function drawFig(f,p,cur){
-  svg=f; token++; f.setAttribute('viewBox',p.vb); fast=true; grid(p);
-  for(var i=0;i<cur;i++) if(p.steps[i].d) p.steps[i].d();
-  fast=false; if(p.steps[cur].d) p.steps[cur].d();
+var animFig=null;
+function drawStep(f,p,i,animate){
+  svg=f; token++; f.innerHTML=''; f.setAttribute('viewBox',p.vb);
+  fast=!animate; grid(p); p.steps[i].d(); fast=false;
+  f.parentNode.classList.toggle('playing',!!animate);
+  if(animate){ animFig=f; var my=token,ms=animate===2?6000:3500; setTimeout(function(){ if(my===token&&f.parentNode) f.parentNode.classList.remove('playing'); },ms); }
+}
+function replayFig(i){
+  var p=curP(), f=$id('figSvg'+i); if(!f||!p.steps[i].d) return;
+  if(animFig && animFig!==f && animFig.parentNode && animFig.dataset.i!==undefined){
+    drawStep(animFig,p,+animFig.dataset.i,false);
+  }
+  drawStep(f,p,i,2); f.dataset.i=i; sfx.chalk();
 }
 function renderNotebook(){
-  var p=curP(), prog=getProg(p.id), cur=prog.step, html='';
+  var p=curP(), prog=getProg(p.id), cur=prog.step, html='', i;
   nbTitle.textContent = p.emoji+' '+p.title;
-  var hasFig = p.steps.slice(0,cur+1).some(function(s){ return s.d; });
-  for(var i=0;i<=cur;i++){
+  animFig=null;
+  for(i=0;i<=cur;i++){
     var st=p.steps[i], isCur=(i===cur);
     html+='<article class="step'+(isCur?' cur':'')+'" data-step="'+i+'">'
       +'<span class="step-num">'+(i+1)+'</span><h3>'+st.t+'</h3><p class="talk">'+st.talk+'</p>'
-      +(isCur&&hasFig?'<div class="fig"><svg id="figSvg" role="img" aria-label="Чертёж"></svg></div>':'')
+      +(st.d?'<div class="fig" data-action="replay" data-i="'+i+'" role="button" tabindex="0" title="Нажми — анимация проиграется ещё раз" aria-label="Чертёж к шагу '+(i+1)+'. Нажми, чтобы проиграть анимацию снова">'
+        +'<svg id="figSvg'+i+'" data-i="'+i+'" aria-hidden="true"></svg><span class="replay">▶ ещё раз</span></div>':'')
       +(st.math?'<div class="math"><span>'+st.math+'</span>'+(st.answer?'<span class="stamp">Проверено ✔</span>':'')+'</div>':'')
       +'</article>';
   }
   nbSheet.innerHTML=html;
-  var f=$id('figSvg'); if(f) drawFig(f,p,cur);
+  for(i=0;i<=cur;i++){
+    if(!p.steps[i].d) continue;
+    drawStep($id('figSvg'+i),p,i,i===cur?1:0);
+  }
   var target=nbSheet.querySelector('.step.cur');
   if(target && nbTouched && cur>0) target.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
 }
@@ -1014,9 +1033,11 @@ document.addEventListener('click',function(e){
   else if(a==='dot'){ goTo(parseInt(b.dataset.i,10)); }
   else if(a==='quiz'){ handleQuiz(b); }
   else if(a==='cta'){ handleCta(); }
+  else if(a==='replay'){ replayFig(parseInt(b.dataset.i,10)); }
 });
 window.addEventListener('keydown',function(e){
   if(e.target && e.target.closest && e.target.closest('textarea,input')) return;
+  if(e.target && e.target.classList && e.target.classList.contains('fig') && (e.code==='Enter'||e.code==='Space')){ e.preventDefault(); replayFig(parseInt(e.target.dataset.i,10)); return; }
   if(e.code==='ArrowRight' || e.code==='Space'){ e.preventDefault(); nextStep(); }
   else if(e.code==='ArrowLeft'){ e.preventDefault(); goTo(getProg(curP().id).step-1); }
   else if(e.code==='KeyA'){ toggleAuto(); }
